@@ -15,6 +15,11 @@
 //of the language used, and of the index number. Those names do
 //not have any effect on loading alternate language definitions.
 //--------------------------------------------------------------
+
+#define LANGLOAD_ENGLISH
+
+
+#ifdef LANGLOAD_ENGLISH
 lang(0, Net_Config, "Net Config")
     lang(1, Init_Delay, "Init Delay")
         lang(2, TIMEOUT, "TIMEOUT")
@@ -165,8 +170,6 @@ lang(0, Net_Config, "Net Config")
                                         lang(141, Cut, "Cut")
                                             lang(142, Paste, "Paste")
                                                 lang(143, Delete, "Delete")
-                                                lang(327, time_manip, "fortuna time")
-                                                lang(328, time_changed, "timestamp altered for:")
                                                     lang(144, New_Dir, "New Dir")
                                                         lang(145, Get_Size, "Get Size")
                                                             lang(146, mcPaste, "mcPaste")
@@ -377,5 +380,13 @@ lang(0, Net_Config, "Net Config")
     // New status message for HDD information read, when there are too many partitions.
     lang(326, HDD_Information_Read_Overflow, "HDD Information Read (truncated)")
     //---------------------------------------------------------------------------
+    lang(327, time_manip, "Fortuna Date")
+    lang(328, time_changed, "timestamp altered for:")
+    //---------------------------------------------------------------------------
     //End of file:  lang.h
     //---------------------------------------------------------------------------
+#endif
+
+#ifdef LANGLOAD_ESPANOL
+#include "SPA.LNG"
+#endif
