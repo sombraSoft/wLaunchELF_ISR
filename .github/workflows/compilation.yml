@@ -38,9 +38,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: wLaunchELF-${{ steps.slug.outputs.sha8 }}
-        path: |
-             BOOT.ELF
-             BOOT-UNC.ELF
+        path: BOOT.ELF, BOOT-UNC.ELF
 
     - name: Create release
       if: github.ref == 'refs/heads/master'
