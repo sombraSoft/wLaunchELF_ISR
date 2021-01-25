@@ -299,7 +299,7 @@ static void Show_About_uLE(void)
 			PrintPos(03, hpos, TextRow);
 			sprintf(TextRow, " mod by matias israelson    ");
 			PrintPos(04, hpos, TextRow);
-			sprintf(TextRow,"build= %s  %s", __DATE__,__TIME__);
+			sprintf(TextRow, "build= %s  %s", __DATE__, __TIME__);
 			PrintPos(05, hpos, TextRow);
 			PrintPos(-1, hpos, "  Project maintainers:");
 			PrintPos(-1, hpos, "  sp193 and AKuHAK");
@@ -1648,7 +1648,7 @@ int IsSupportedFileType(char *path)
 	if (strchr(path, ':') != NULL) {
 		if (genCmpFileExt(path, "ELF")) {
 			return (checkELFheader(path) >= 0);
-		} else if ((genCmpFileExt(path, "TXT") || genCmpFileExt(path, "CFG") || genCmpFileExt(path, "INI") ) || (genCmpFileExt(path, "JPG") || genCmpFileExt(path, "JPEG"))) {
+		} else if ((genCmpFileExt(path, "TXT") || genCmpFileExt(path, "CFG") || genCmpFileExt(path, "INI")) || (genCmpFileExt(path, "JPG") || genCmpFileExt(path, "JPEG"))) {
 			return 1;
 		} else
 			return 0;
@@ -1881,7 +1881,7 @@ Recurse_for_ESR:  //Recurse here for PS2Disc command with ESR disc
 		LastDir[0] = 0;
 		getFilePath(tmp, FALSE);
 		if (tmp[0]) {
-			if (genCmpFileExt(tmp, "TXT") || genCmpFileExt(tmp, "CFG") || genCmpFileExt(tmp, "INI") ) {
+			if (genCmpFileExt(tmp, "TXT") || genCmpFileExt(tmp, "CFG") || genCmpFileExt(tmp, "INI")) {
 				if (setting->GUI_skin[0]) {
 					GUI_active = 0;
 					loadSkin(BACKGROUND_PIC, 0, 0);
@@ -2150,7 +2150,7 @@ int main(int argc, char *argv[])
 	int CNF_error = -1;  //assume error until CNF correctly loaded
 	int i;
 
-printf("ulaunchelf debug   \n");
+	printf("ulaunchelf debug   \n");
 
 	boot_argc = argc;
 	for (i = 0; (i < argc) && (i < 8); i++)

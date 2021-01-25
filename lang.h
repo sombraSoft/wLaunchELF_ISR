@@ -381,10 +381,10 @@ lang(0, Net_Config, "Net Config")
     lang(326, HDD_Information_Read_Overflow, "HDD Information Read (truncated)")
     //---------------------------------------------------------------------------
     lang(327, time_manip, "Fortuna Date")
-    lang(328, time_changed, "timestamp altered for:")
-    //---------------------------------------------------------------------------
-    //End of file:  lang.h
-    //---------------------------------------------------------------------------
+        lang(328, time_changed, "timestamp altered for:")
+//---------------------------------------------------------------------------
+//End of file:  lang.h
+//---------------------------------------------------------------------------
 #endif
 
 #ifdef LANGLOAD_ESPANOL
