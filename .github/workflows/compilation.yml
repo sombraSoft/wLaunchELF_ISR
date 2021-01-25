@@ -47,4 +47,4 @@ jobs:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         automatic_release_tag: "latest"
         title: "Latest automated build"
-        files: BOOT.ELF
+        files: BOOT.ELF, BOOT-UNC.ELF
