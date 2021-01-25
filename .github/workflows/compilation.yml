@@ -1,4 +1,4 @@
-name: Automated Build
+name: Automated-Build
 
 on:
   workflow_dispatch:
