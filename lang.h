@@ -21,5 +21,3 @@
 //this is the english lang file, wich is the basic lang
 #include "Lang/ENG.LNG"
 //to compile with custom language change the file in the previous line with yours.
-
-
