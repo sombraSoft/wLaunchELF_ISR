@@ -16,8 +16,8 @@
 //not have any effect on loading alternate language definitions.
 //--------------------------------------------------------------
 
-//#define LANGLOAD_ENGLISH
-#define LANGLOAD_ESPANOL
+#define LANGLOAD_ENGLISH
+//#define LANGLOAD_ESPANOL
 
 #ifdef LANGLOAD_ENGLISH
 lang(0, Net_Config, "Net Config")
