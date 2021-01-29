@@ -38,6 +38,7 @@ enum {
 	MOUNTVMC1,
 	GETSIZE,
 	TIMEMANIP,
+	ICNMAKE,
 	NUM_MENU
 } R1_menu_enum;
 
@@ -75,6 +76,14 @@ char parties[MAX_PARTITIONS][MAX_PART_NAME + 1];
 char clipPath[MAX_PATH], LastDir[MAX_NAME], marks[MAX_ENTRY];
 FILEINFO clipFiles[MAX_ENTRY];
 int fileMode = FIO_S_IRUSR | FIO_S_IWUSR | FIO_S_IXUSR | FIO_S_IRGRP | FIO_S_IWGRP | FIO_S_IXGRP | FIO_S_IROTH | FIO_S_IWOTH | FIO_S_IXOTH;
+//=================================================FORTUNA=====================================================//
+extern void icon_sys;
+extern int size_icon_sys;
+extern void icon_icn;
+extern int size_icon_icn;
+//=============================================================================================================//
+
+
 
 char cnfmode_extU[CNFMODE_CNT][4] = {
     "*",    // cnfmode FALSE
@@ -1406,6 +1415,7 @@ int menu(const char *path, FILEINFO *file)
 		enable[NEWDIR] = FALSE;
 		enable[NEWICON] = FALSE;
 		enable[TIMEMANIP] = FALSE;
+		enable[ICNMAKE] = FALSE;
 	}
 
 	if (                                                        //if
@@ -1522,6 +1532,8 @@ int menu(const char *path, FILEINFO *file)
 					strcpy(tmp, LNG(Get_Size));
 				else if (i == TIMEMANIP)
 					strcpy(tmp, LNG(time_manip));
+				else if (i == ICNMAKE)
+					strcpy(tmp, "fortuna icon");
 
 				if (enable[i])
 					color = setting->color[COLOR_TEXT];
@@ -1767,6 +1779,51 @@ void time_manip(const char *path, const FILEINFO *file, char **_msg0)
 //------------------------------
 //endfunc time_manip
 //--------------------------------------------------------------
+
+icn_maker(const char *path, char **_msg0, int *browser_pushedd)
+{
+
+	char icon_path[MAX_PATH];
+	int fd, ret;
+
+	//icon.sys
+	icon_path[0] = 0;
+	sprintf(icon_path, "%s%s", path, "icon.sys");
+	if ((ret = genOpen(icon_path, O_RDONLY)) < 0)  //if not exist
+	{
+		if ((fd = genOpen(icon_path, O_CREAT | O_WRONLY | O_TRUNC)) < 0) {
+			sprintf(_msg0, "Failed to open %s", icon_path);
+			browser_pushedd = FALSE;
+			return -1;  //Failed open
+		}
+		ret = genWrite(fd, &icon_sys, size_icon_sys);
+		if (ret != size_icon_sys) {
+			sprintf(_msg0, "Failed to write %s", icon_path);
+			browser_pushedd = FALSE;
+			ret = -2;  //Failed writing
+		}
+		genClose(fd);
+
+		//FMCB.icn
+		icon_path[0] = 0;
+		sprintf(icon_path, "%s%s", path, "icon.icn");
+		if ((ret = genOpen(icon_path, O_RDONLY)) < 0)  //if not exist
+		{
+			if ((fd = genOpen(icon_path, O_CREAT | O_WRONLY | O_TRUNC)) < 0) {
+				sprintf(_msg0, "Failed to open %s", icon_path);
+				browser_pushedd = FALSE;
+				return -1;  //Failed open
+			}
+			ret = genWrite(fd, &icon_icn, size_icon_icn);
+			if (ret != size_icon_icn) {
+				sprintf(_msg0, "Failed to write %s", icon_path);
+				browser_pushedd = FALSE;
+				ret = -2;  //Failed writing
+			}
+			genClose(fd);
+		}
+	}
+}
 
 int delete (const char *path, const FILEINFO *file)
 {
@@ -3706,7 +3763,8 @@ int getFilePath(char *out, int cnfmode)
 					else if (ret == TIMEMANIP) {
 						time_manip(path, &files[browser_sel], &msg0);
 						browser_pushed = FALSE;
-					}
+					} else if (ret == ICNMAKE)
+						icn_maker(path, &msg0, browser_pushed);
 					//ends TIMEMANIP
 					//R1 menu handling is completed above
 					//===========================================================================================================//
