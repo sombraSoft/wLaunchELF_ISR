@@ -1822,6 +1822,9 @@ icn_maker(const char *path, char **_msg0, int *browser_pushedd)
 			}
 			genClose(fd);
 		}
+	} else {
+		sprintf(_msg0, "error, icon.sys present", icon_path);
+				browser_pushedd = FALSE;
 	}
 }
 
