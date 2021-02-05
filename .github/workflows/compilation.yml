@@ -28,10 +28,13 @@ jobs:
     - name: Compile wLaunchELF
       run: |
         make
-    - name: make lang package
+    - name: make lang package and elf package
       run: |
        cd Lang
        zip  Lang.zip *.LNG
+       cd ..
+       HASH=${GITHUB_SHA::7}
+       zip "wLaunchELF 4.43a_ISR [$HASH].zip" *.ELF
     - name: Get short SHA
       id: slug
       run: echo "::set-output name=sha8::$(echo ${GITHUB_SHA} | cut -c1-8)"
@@ -42,7 +45,7 @@ jobs:
       with:
         name: wLaunchELF-${{ steps.slug.outputs.sha8 }}
         path: |
-              *.ELF
+              *.zip
               Lang/Lang.zip
 
     - name: Create release
@@ -53,5 +56,5 @@ jobs:
         automatic_release_tag: "latest"
         title: "Latest automated build"
         files: |
-               *.ELF
+               *.zip
                Lang/Lang.zip
