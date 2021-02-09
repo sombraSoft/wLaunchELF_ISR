@@ -36,14 +36,6 @@ jobs:
        HASH=${GITHUB_SHA::7}
        zip "wLaunchELF ENG[$HASH].zip" *.ELF
 
-    - name: clean and make spanish package
-      run: |
-       make clean
-       echo #include \"Lang/SPA.LNG\">lang.h
-       cat lang.h
-       HASH=${GITHUB_SHA::7
-       zip "wLaunchELF ESP[$HASH].zip" *.ELF
-
     - name: Get short SHA
       id: slug
       run: echo "::set-output name=sha8::$(echo ${GITHUB_SHA} | cut -c1-8)"
