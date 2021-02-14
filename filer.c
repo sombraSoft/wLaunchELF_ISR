@@ -1395,7 +1395,7 @@ int menu(const char *path, FILEINFO *file)
 	            )))
 		write_disabled = 1;
 
-	if (!strcmp(path, "hdd0:/") || path[0] == 0)  //No menu cmds in partition/device lists
+	if (!strcmp(path, "hdd0:/") || !strcmp(path, "MISC/") || path[0] == 0)  //No menu cmds in partition/device lists
 		menu_disabled = 1;
 
 	if (menu_disabled) {
