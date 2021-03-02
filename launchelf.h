@@ -1,10 +1,10 @@
 #ifndef LAUNCHELF_H
 #define LAUNCHELF_H
 
-#define ULE_VERSION "v4.43a_ISR"
-#ifndef ULE_VERDATE
-#define ULE_VERDATE __DATE__
-#endif
+#define ULE_VERSION "4.43a_ISR"
+//#ifndef ULE_VERDATE
+//#define ULE_VERDATE __DATE__
+//#endif
 #include "githash.h"
 
 //#define SIO_DEBUG 1	//defined only for debug versions using the EE_SIO patch
@@ -23,9 +23,7 @@
 #include <sys/stat.h>
 #include <iopheap.h>
 #include <errno.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <stdlib.h>
+#include <fileXio_rpc.h>
 #include <iopcontrol.h>
 #include <stdarg.h>
 #include <sbv_patches.h>
@@ -36,19 +34,16 @@
 #include <debug.h>
 #include <gsKit.h>
 #include <dmaKit.h>
+#include <cdvd_rpc.h>
 #include <libcdvd.h>
 #include <libjpg.h>
 #include <libkbd.h>
-#include <math.h>
+#include <floatlib.h>
 #include <usbhdfsd-common.h>
 #include "hdl_rpc.h"
 
 #include <sio.h>
 #include <sior_rpc.h>
-
-#define NEWLIB_PORT_AWARE
-#include <fileXio_rpc.h>
-#include <io_common.h>
 
 #ifdef SIO_DEBUG
 #define DPRINTF(args...) sio_printf(args)

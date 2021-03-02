@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <loadcore.h>
 #include <intrman.h>
+#include <sys/stat.h>
 #include <dev9.h>
 #include <sifrpc.h>
 #include <sysmem.h>

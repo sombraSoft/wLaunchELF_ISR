@@ -38,7 +38,6 @@ enum {
 	MOUNTVMC1,
 	GETSIZE,
 	TIMEMANIP,
-	ICNMAKE,
 	NUM_MENU
 } R1_menu_enum;
 
@@ -72,18 +71,10 @@ int file_show = 1;  //dlanor: 0==name_only, 1==name+size+time, 2==title+size+tim
 int file_sort = 1;  //dlanor: 0==none, 1==name, 2==title, 3==mtime
 int size_valid = 0;
 int time_valid = 0;
-char parties[MAX_PARTITIONS][MAX_PART_NAME + 1];
+char parties[MAX_PARTITIONS][MAX_PART_NAME+1];
 char clipPath[MAX_PATH], LastDir[MAX_NAME], marks[MAX_ENTRY];
 FILEINFO clipFiles[MAX_ENTRY];
 int fileMode = FIO_S_IRUSR | FIO_S_IWUSR | FIO_S_IXUSR | FIO_S_IRGRP | FIO_S_IWGRP | FIO_S_IXGRP | FIO_S_IROTH | FIO_S_IWOTH | FIO_S_IXOTH;
-//=================================================FORTUNA=====================================================//
-extern void icon_sys;
-extern int size_icon_sys;
-extern void icon_icn;
-extern int size_icon_icn;
-//=============================================================================================================//
-
-
 
 char cnfmode_extU[CNFMODE_CNT][4] = {
     "*",    // cnfmode FALSE
@@ -613,8 +604,9 @@ int readMC(const char *path, FILEINFO *info, int max)
 //--------------------------------------------------------------
 int readCD(const char *path, FILEINFO *info, int max)
 {
-	iox_dirent_t record;
-	int n = 0, dd = -1;
+	static struct TocEntry TocEntryList[MAX_ENTRY];
+	char dir[MAX_PATH];
+	int i, j, n;
 	u64 wait_start;
 
 	if (sceCdGetDiskType() <= SCECdUNKNOWN) {
@@ -631,35 +623,30 @@ int readCD(const char *path, FILEINFO *info, int max)
 		}
 	}
 
-	if ((dd = fileXioDopen(path)) < 0)
-		goto exit;  //exit if error opening directory
-	while (fileXioDread(dd, &record) > 0) {
-		if ((FIO_S_ISDIR(record.stat.mode)) && (!strcmp(record.name, ".") || !strcmp(record.name, "..")))
-			continue;  //Skip entry if pseudo-folder "." or ".."
+	strcpy(dir, &path[5]);
+	CDVD_FlushCache();
+	n = CDVD_GetDir(dir, NULL, CDVD_GET_FILES_AND_DIRS, TocEntryList, MAX_ENTRY, dir);
 
-		strcpy(info[n].name, record.name);
-		clear_mcTable(&info[n].stats);
-		if (FIO_S_ISDIR(record.stat.mode)) {
-			info[n].stats.AttrFile = MC_ATTR_norm_folder;
-		} else if (FIO_S_ISREG(record.stat.mode)) {
-			info[n].stats.AttrFile = MC_ATTR_norm_file;
-			info[n].stats.FileSizeByte = record.stat.size;
-			info[n].stats.Reserve2 = 0;
-		} else
-			continue;  //Skip entry which is neither a file nor a folder
-		strncpy((char *)info[n].stats.EntryName, info[n].name, 32);
-		memcpy((void *)&info[n].stats._Create, record.stat.ctime, 8);
-		memcpy((void *)&info[n].stats._Modify, record.stat.mtime, 8);
-		n++;
-		if (n == max)
-			break;
-	}  //ends while
+	for (i = j = 0; i < n; i++) {
+		if (TocEntryList[i].fileProperties & 0x02 &&
+		    (!strcmp(TocEntryList[i].filename, ".") ||
+		     !strcmp(TocEntryList[i].filename, "..")))
+			continue;  //Skip pseudopaths "." and ".."
+		strcpy(info[j].name, TocEntryList[i].filename);
+		clear_mcTable(&info[j].stats);
+		if (TocEntryList[i].fileProperties & 0x02) {
+			info[j].stats.AttrFile = MC_ATTR_norm_folder;
+		} else {
+			info[j].stats.AttrFile = MC_ATTR_norm_file;
+			info[j].stats.FileSizeByte = TocEntryList[i].fileSize;
+			info[j].stats.Reserve2 = 0;  //Assuming a CD can't have a single 4GB file
+		}
+		j++;
+	}
+
 	size_valid = 1;
 
-exit:
-	if (dd >= 0)
-		fileXioDclose(dd);  //Close directory if opened above
-	return n;
+	return j;
 }
 //------------------------------
 //endfunc readCD
@@ -766,8 +753,8 @@ int genFixPath(const char *inp_path, char *gen_path)
 	pathSep = strchr(uLE_path, '/');
 
 	if (!strncmp(uLE_path, "cdfs", 4)) {  //if using CD or DVD disc path
-		// TODO: Flush CDFS cache
-		sceCdDiskReady(0);
+		CDVD_FlushCache();
+		CDVD_DiskReady(0);
 		//end of clause for using a CD or DVD path
 
 	} else if (!strncmp(uLE_path, "mass", 4)) {  //if using USB mass: path
@@ -835,7 +822,7 @@ int genRemove(char *path)
 int genOpen(char *path, int mode)
 {
 	genLimObjName(path, 0);
-	return open(path, mode, fileMode);
+	return fileXioOpen(path, mode, fileMode);
 }
 //------------------------------
 //endfunc genOpen
@@ -862,28 +849,28 @@ int genDopen(char *path)
 //--------------------------------------------------------------
 int genLseek(int fd, int where, int how)
 {
-	return lseek(fd, where, how);
+	return fileXioLseek(fd, where, how);
 }
 //------------------------------
 //endfunc genLseek
 //--------------------------------------------------------------
 int genRead(int fd, void *buf, int size)
 {
-	return read(fd, buf, size);
+	return fileXioRead(fd, buf, size);
 }
 //------------------------------
 //endfunc genRead
 //--------------------------------------------------------------
 int genWrite(int fd, void *buf, int size)
 {
-	return write(fd, buf, size);
+	return fileXioWrite(fd, buf, size);
 }
 //------------------------------
 //endfunc genWrite
 //--------------------------------------------------------------
 int genClose(int fd)
 {
-	return close(fd);
+	return fileXioClose(fd);
 }
 //------------------------------
 //endfunc genClose
@@ -900,7 +887,7 @@ int genCmpFileExt(const char *filename, const char *extension)
 	const char *p;
 
 	p = strrchr(filename, '.');
-	return (p != NULL && !strcasecmp(p + 1, extension));
+	return (p != NULL && !stricmp(p + 1, extension));
 }
 //------------------------------
 //endfunc genDclose
@@ -1128,8 +1115,8 @@ void initHOST(void)
 
 	load_ps2host();
 	host_error = 0;
-	if ((fd = open("host:elflist.txt", O_RDONLY)) >= 0) {
-		close(fd);
+	if ((fd = fileXioOpen("host:elflist.txt", O_RDONLY)) >= 0) {
+		fileXioClose(fd);
 		host_elflist = 1;
 	} else {
 		host_elflist = 0;
@@ -1154,16 +1141,16 @@ int readHOST(const char *path, FILEINFO *info, int max)
 	if (!strncmp(path, "host:/", 6))
 		strcpy(host_path + 5, path + 6);
 	if ((host_elflist) && !strcmp(host_path, "host:")) {
-		if ((hfd = open("host:elflist.txt", O_RDONLY, 0)) < 0)
+		if ((hfd = fileXioOpen("host:elflist.txt", O_RDONLY, 0)) < 0)
 			return 0;
-		if ((size = lseek(hfd, 0, SEEK_END)) <= 0) {
-			close(hfd);
+		if ((size = fileXioLseek(hfd, 0, SEEK_END)) <= 0) {
+			fileXioClose(hfd);
 			return 0;
 		}
 		elflisttxt = (char *)memalign(64, size);
-		lseek(hfd, 0, SEEK_SET);
-		read(hfd, elflisttxt, size);
-		close(hfd);
+		fileXioLseek(hfd, 0, SEEK_SET);
+		fileXioRead(hfd, elflisttxt, size);
+		fileXioClose(hfd);
 		contentptr = 0;
 		for (rv = 0; rv <= size; rv++) {
 			elflistchar = elflisttxt[rv];
@@ -1171,8 +1158,8 @@ int readHOST(const char *path, FILEINFO *info, int max)
 				host_next[contentptr] = 0;
 				snprintf(host_path, MAX_PATH - 1, "%s%s", "host:", host_next);
 				clear_mcTable(&info[hostcount].stats);
-				if ((hfd = open(makeHostPath(Win_path, host_path), O_RDONLY)) >= 0) {
-					close(hfd);
+				if ((hfd = fileXioOpen(makeHostPath(Win_path, host_path), O_RDONLY)) >= 0) {
+					fileXioClose(hfd);
 					info[hostcount].stats.AttrFile = MC_ATTR_norm_file;
 					makeFslPath(info[hostcount++].name, host_next);
 				} else if ((hfd = fileXioDopen(Win_path)) >= 0) {
@@ -1377,6 +1364,7 @@ int menu(const char *path, FILEINFO *file)
 	menu_len = strlen(LNG(psuPaste)) > menu_len ? strlen(LNG(psuPaste)) : menu_len;
 	menu_len = strlen(LNG(time_manip)) > menu_len ? strlen(LNG(time_manip)) : menu_len;
 	menu_len = (strlen(LNG(Mount)) + 6) > menu_len ? (strlen(LNG(Mount)) + 6) : menu_len;
+	
 
 	int menu_ch_w = menu_len + 1;                                 //Total characters in longest menu string
 	int menu_ch_h = NUM_MENU;                                     //Total number of menu lines
@@ -1414,19 +1402,7 @@ int menu(const char *path, FILEINFO *file)
 		enable[RENAME] = FALSE;
 		enable[NEWDIR] = FALSE;
 		enable[NEWICON] = FALSE;
-		enable[TIMEMANIP] = FALSE;
-		enable[ICNMAKE] = FALSE;
 	}
-
-	if (                                                        //if
-	    (file->stats.AttrFile & sceMcFileAttrSubdir) &&         //pointing to a folder
-	    (strcmp(file->name, "..")) &&                           //it isnt the "parent directory button"
-	    ((!strcmp(path, "mc0:/")) || (!strcmp(path, "mc1:/")))  //we're on Memory card roots
-	) {
-		enable[TIMEMANIP] = TRUE;
-	} else {
-		enable[TIMEMANIP] = FALSE;
-	}  //enable time manip, otherwise disable it
 
 	if (nmarks == 0) {
 		if (!strcmp(file->name, "..")) {
@@ -1439,6 +1415,18 @@ int menu(const char *path, FILEINFO *file)
 	} else {
 		enable[RENAME] = FALSE;
 	}
+
+	if (                                                        //if
+	    (file->stats.AttrFile & sceMcFileAttrSubdir) &&         //pointing to a folder
+	    (strcmp(file->name, "..")) &&                           //it isnt the "parent directory button"
+	    ((!strcmp(path, "mc0:/")) || (!strcmp(path, "mc1:/")))  //we're on Memory card roots
+	) {
+		enable[TIMEMANIP] = TRUE;
+	} else {
+		enable[TIMEMANIP] = FALSE;
+	}  //enable time manip, otherwise disable it
+
+
 
 	if ((file->stats.AttrFile & sceMcFileAttrSubdir) || !strncmp(path, "vmc", 3) || !strncmp(path, "mc", 2)) {
 		enable[MOUNTVMC0] = FALSE;  //forbid insane VMC mounting
@@ -1532,8 +1520,6 @@ int menu(const char *path, FILEINFO *file)
 					strcpy(tmp, LNG(Get_Size));
 				else if (i == TIMEMANIP)
 					strcpy(tmp, LNG(time_manip));
-				else if (i == ICNMAKE)
-					strcpy(tmp, "fortuna icon");
 
 				if (enable[i])
 					color = setting->color[COLOR_TEXT];
@@ -1704,7 +1690,6 @@ char *PathPad_menu(const char *path)
 //------------------------------
 //endfunc PathPad_menu
 //--------------------------------------------------------------
-
 u64 getFileSize(const char *path, const FILEINFO *file)
 {
 	iox_stat_t stat;
@@ -1744,9 +1729,7 @@ u64 getFileSize(const char *path, const FILEINFO *file)
 //endfunc getFileSize
 //--------------------------------------------------------------
 
-// time_manip
-// when called, this function will change the modification date of the selected folder to 31-12-2099 @ 23:59:59 PM
-// it's intended to only use this function to prepare (or fix) a folder to hold a fortuna icon file
+
 void time_manip(const char *path, const FILEINFO *file, char **_msg0)
 {
 	int rett, slot;
@@ -1771,62 +1754,14 @@ void time_manip(const char *path, const FILEINFO *file, char **_msg0)
 
 	rett = mcSetFileInfo(slot, 0, file->name, mcDirAAA, 0x02);
 	if (rett == 0)
-		sprintf(_msg0, "success, folder [%s] Mc Slot [%d] .", file->name, slot);
+		sprintf(_msg0, "success, folder [%s]  Mc Slot [%d] .", file->name, slot);
 	if (rett < 0)
-		sprintf(_msg0, "error [%d], folder[%s] Mc Slot=[%d] .", rett, file->name, slot);
+		sprintf(_msg0, "error [%d], folder[%s]  Mc Slot=[%d] .", rett, file->name, slot);
 	mcSync(0, NULL, &rett);
 }  // TIMEMANIP
 //------------------------------
 //endfunc time_manip
 //--------------------------------------------------------------
-
-icn_maker(const char *path, char **_msg0, int *browser_pushedd)
-{
-
-	char icon_path[MAX_PATH];
-	int fd, ret;
-
-	//icon.sys
-	icon_path[0] = 0;
-	sprintf(icon_path, "%s%s", path, "icon.sys");
-	if ((ret = genOpen(icon_path, O_RDONLY)) < 0)  //if not exist
-	{
-		if ((fd = genOpen(icon_path, O_CREAT | O_WRONLY | O_TRUNC)) < 0) {
-			sprintf(_msg0, "Failed to open %s", icon_path);
-			browser_pushedd = FALSE;
-			return -1;  //Failed open
-		}
-		ret = genWrite(fd, &icon_sys, size_icon_sys);
-		if (ret != size_icon_sys) {
-			sprintf(_msg0, "Failed to write %s", icon_path);
-			browser_pushedd = FALSE;
-			ret = -2;  //Failed writing
-		}
-		genClose(fd);
-
-		//FMCB.icn
-		icon_path[0] = 0;
-		sprintf(icon_path, "%s%s", path, "icon.icn");
-		if ((ret = genOpen(icon_path, O_RDONLY)) < 0)  //if not exist
-		{
-			if ((fd = genOpen(icon_path, O_CREAT | O_WRONLY | O_TRUNC)) < 0) {
-				sprintf(_msg0, "Failed to open %s", icon_path);
-				browser_pushedd = FALSE;
-				return -1;  //Failed open
-			}
-			ret = genWrite(fd, &icon_icn, size_icon_icn);
-			if (ret != size_icon_icn) {
-				sprintf(_msg0, "Failed to write %s", icon_path);
-				browser_pushedd = FALSE;
-				ret = -2;  //Failed writing
-			}
-			genClose(fd);
-		}
-	} else {
-		sprintf(_msg0, "error, icon.sys present", icon_path);
-		browser_pushedd = FALSE;
-	}
-}
 
 int delete (const char *path, const FILEINFO *file)
 {
@@ -1860,15 +1795,15 @@ int delete (const char *path, const FILEINFO *file)
 			mcSync(0, NULL, &ret);
 
 		} else if (!strncmp(path, "hdd", 3)) {
-			ret = rmdir(hdddir);
+			ret = fileXioRmdir(hdddir);
 
 		} else if (!strncmp(path, "vmc", 3)) {
-			ret = rmdir(dir);
+			ret = fileXioRmdir(dir);
 			fileXioDevctl("vmc0:", DEVCTL_VMCFS_CLEAN, NULL, 0, NULL, 0);
 
 		} else {  //For all other devices
 			sprintf(dir, "%s%s", path, file->name);
-			ret = rmdir(dir);
+			ret = fileXioRmdir(dir);
 		}
 	} else {  //The object to delete is a file
 		if (!strncmp(path, "mc", 2)) {
@@ -1876,12 +1811,12 @@ int delete (const char *path, const FILEINFO *file)
 			mcDelete(dir[2] - '0', 0, &dir[4]);
 			mcSync(0, NULL, &ret);
 		} else if (!strncmp(path, "hdd", 3)) {
-			ret = unlink(hdddir);
+			ret = fileXioRemove(hdddir);
 		} else if (!strncmp(path, "vmc", 3)) {
-			ret = unlink(dir);
+			ret = fileXioRemove(dir);
 			fileXioDevctl("vmc0:", DEVCTL_VMCFS_CLEAN, NULL, 0, NULL, 0);
 		} else {  //For all other devices
-			ret = unlink(dir);
+			ret = fileXioRemove(dir);
 		}
 	}
 	return ret;
@@ -1911,8 +1846,8 @@ int Rename(const char *path, const FILEINFO *file, const char *name)
 		if ((test = fileXioDopen(newPath)) >= 0) {  //Does folder of same name exist ?
 			fileXioDclose(test);
 			ret = -EEXIST;
-		} else if ((test = open(newPath, O_RDONLY)) >= 0) {  //Does file of same name exist ?
-			close(test);
+		} else if ((test = fileXioOpen(newPath, O_RDONLY)) >= 0) {  //Does file of same name exist ?
+			fileXioClose(test);
 			ret = -EEXIST;
 		} else {  //No file/folder of the same name exists
 			mcGetInfo(path[2] - '0', 0, &mctype_PSx, NULL, NULL);
@@ -1947,10 +1882,10 @@ int Rename(const char *path, const FILEINFO *file, const char *name)
 				fileXioDclose(temp_fd);
 			}
 		} else if (file->stats.AttrFile & sceMcFileAttrFile) {  //Rename a file ?
-			ret = (temp_fd = open(oldPath, O_RDONLY));
+			ret = (temp_fd = fileXioOpen(oldPath, O_RDONLY));
 			if (temp_fd >= 0) {
-				ret = _ps2sdk_ioctl(temp_fd, IOCTL_RENAME, (void *)newPath);
-				close(temp_fd);
+				ret = fileXioIoctl(temp_fd, IOCTL_RENAME, (void *)newPath);
+				fileXioClose(temp_fd);
 			}
 		} else  //This was neither a folder nor a file !!!
 			return -1;
@@ -2470,7 +2405,7 @@ non_PSU_RESTORE_init:
 	buffSize = 0x100000;  //First assume buffer size = 1MB (good for HDD)
 	if (!strncmp(out, "mc", 2) || !strncmp(out, "mass", 4) || !strncmp(out, "vmc", 3))
 		buffSize = 131072;  //Use  128KB if writing to USB (Flash RAM writes) or MC (pretty slow).
-		                    //VMC contents should use the same size, as VMCs will often be stored on USB
+	                        //VMC contents should use the same size, as VMCs will often be stored on USB
 	else if (!strncmp(in, "mc", 2))
 		buffSize = 262144;  //Use 256KB if reading from MC (still pretty slow)
 	else if (!strncmp(out, "host", 4))
@@ -3582,9 +3517,8 @@ int getFilePath(char *out, int cnfmode)
 					unmountAll();
 					return rv;
 				}
-			} else {                     //cnfmode == FALSE
-				if (new_pad & PAD_R1) {  // MENU R1 !!!
-					printf("DEBUG, PRESSED R1\n");
+			} else {  //cnfmode == FALSE
+				if (new_pad & PAD_R1) {
 					ret = menu(path, &files[browser_sel]);
 					if (ret == COPY || ret == CUT) {
 						strcpy(clipPath, path);
@@ -3766,11 +3700,13 @@ int getFilePath(char *out, int cnfmode)
 					else if (ret == TIMEMANIP) {
 						time_manip(path, &files[browser_sel], &msg0);
 						browser_pushed = FALSE;
-					} else if (ret == ICNMAKE)
-						icn_maker(path, &msg0, browser_pushed);
-					//ends TIMEMANIP
-					//R1 menu handling is completed above
-					//===========================================================================================================//
+					}
+
+
+
+
+
+					   //R1 menu handling is completed above
 				} else if ((!swapKeys && new_pad & PAD_CROSS) || (swapKeys && new_pad & PAD_CIRCLE)) {
 					if (browser_sel != 0 && path[0] != 0 && strcmp(path, "hdd0:/")) {
 						if (marks[browser_sel]) {
@@ -3977,19 +3913,18 @@ int getFilePath(char *out, int cnfmode)
 						iconcolr = COLOR_GRAPH1;
 					} else {
 						iconbase = ICON_FILE;
-						if (
-						    genCmpFileExt(files[top + i].name, "ELF") ||
-						    genCmpFileExt(files[top + i].name, "KELF"))
+						if  (
+							genCmpFileExt(files[top + i].name, "ELF") ||
+							genCmpFileExt(files[top + i].name, "KELF")
+							)
 							iconcolr = COLOR_GRAPH2;
 						else if (
-						    genCmpFileExt(files[top + i].name, "TXT") ||
-						    genCmpFileExt(files[top + i].name, "INI") ||
-						    genCmpFileExt(files[top + i].name, "CFG") ||
-						    genCmpFileExt(files[top + i].name, "JPG") ||
-						    genCmpFileExt(files[top + i].name, "JPEG"))
-							iconcolr = COLOR_GRAPH4;
-
-						else if (genCmpFileExt(files[top + i].name, "PSU"))  //icon highlight for other important files
+								genCmpFileExt(files[top + i].name, "TXT")  || 
+								genCmpFileExt(files[top + i].name, "INI")  ||
+						    	genCmpFileExt(files[top + i].name, "CFG")  ||
+								genCmpFileExt(files[top + i].name, "JPG")  || 
+								genCmpFileExt(files[top + i].name, "JPEG")
+								)
 							iconcolr = COLOR_GRAPH4;
 						else
 							iconcolr = COLOR_GRAPH3;
@@ -4195,7 +4130,6 @@ void submenu_func_GetSize(char *mess, char *path, FILEINFO *files)
 			*(--sizeP) = '0' + (size % 10);
 		} while (size /= 10);
 		sprintf(mess + text_pos, " mcTsz=%s%n", sizeP, &text_inc);
-		printf("DEBUG GETSIZE\n");
 		text_pos += text_inc;
 	}
 	//----- End of sections that show attributes -----
@@ -4234,7 +4168,7 @@ void subfunc_Paste(char *mess, char *path)
 		}
 	}
 
-	//	unmountAll(); //disabled to avoid interference with VMC implementation
+//	unmountAll(); //disabled to avoid interference with VMC implementation
 
 finished:
 	if (ret < 0) {

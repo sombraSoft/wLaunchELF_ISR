@@ -46,11 +46,6 @@ static int hddConnected, hddFormated;
 static char DbgMsg[MAX_TEXT_LINE * 30];
 
 //--------------------------------------------------------------
-// radians to degrees helper functions
-float sindgf(float f) { return sinf(f) * M_PI / 180.0f; }
-float cosdgf(float f) { return cosf(f) * M_PI / 180.0f; }
-
-//--------------------------------------------------------------
 ///*
 void DebugDisp(char *Message)
 {
@@ -169,7 +164,7 @@ void GetHddInfo(void)
 
 			if (Treat == TREAT_PFS) {  //Starts clause for TREAT_PFS
 				sprintf(tmp, "hdd0:%s", PartyInfo[numParty].Name);
-				partitionFd = open(tmp, O_RDONLY, 0);
+				partitionFd = fileXioOpen(tmp, O_RDONLY, 0);
 				if (partitionFd >= 0) {
 					for (i = 0, size = 0; i < infoDirEnt.stat.private_0 + 1; i++) {
 						rv = fileXioIoctl2(partitionFd, HIOCGETSIZE, &i, 4, NULL, 0);
@@ -177,7 +172,7 @@ void GetHddInfo(void)
 					}
 					PartyInfo[numParty].TotalSize = size;
 					//			PartyInfo[numParty].RawSize = size;
-					close(partitionFd);
+					fileXioClose(partitionFd);
 
 
 					//			mountParty(tmp);
@@ -572,7 +567,7 @@ int RenameParty(PARTYINFO Info, char *newName)
 	out[0] = 0;
 	tmpName[0] = 0;
 	sprintf(tmpName, "%s", newName);
-	if (!strcmp(Info.Name, tmpName))  //Exactly the same name entered.
+	if (!strcmp(Info.Name, tmpName)) //Exactly the same name entered.
 		goto end;
 	//If other partitions exist with the same name, append a number to keep the name unique.
 	for (i = 0; i < numParty; i++) {
@@ -1035,8 +1030,8 @@ void hddManager(void)
 						printXY(LNG(TYPE_CD_GAME), x, y,
 						        setting->color[COLOR_TEXT], TRUE, ((SCREEN_WIDTH / 2 - 20) - SCREEN_MARGIN - 2 * FONT_WIDTH));
 					pfsFree = -1;  //Disable lower pie chart display
-					               //---------- End of clause for HDL game partitions ----------
-				} else {           //ends clause for HDL, starts clause for normal partitions
+					//---------- End of clause for HDL game partitions ----------
+				} else {  //ends clause for HDL, starts clause for normal partitions
 					//---------- Start of clause for PFS partitions ----------
 
 					sprintf(c, "%s: %d %s", LNG(PFS_SIZE), (int)PartyInfo[browser_sel].TotalSize, LNG(MB));
