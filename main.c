@@ -300,7 +300,7 @@ static void Show_About_uLE(void)
 			sprintf(TextRow, " mod by matias israelson    ");
 			PrintPos(04, hpos, TextRow);
 			sprintf(TextRow, "build= %s  %s", __DATE__, __TIME__);
-			PrintPos(05, hpos, TextRow); // build= __DATE__ __TIME__
+			PrintPos(05, hpos, TextRow);  // build= __DATE__ __TIME__
 			PrintPos(-1, hpos, "  Project maintainers:");
 			PrintPos(-1, hpos, "  sp193 and AKuHAK");
 			PrintPos(-1, hpos, "uLaunchELF Project maintainers:");
@@ -323,7 +323,7 @@ static void Show_About_uLE(void)
 		post_event = event;
 		event = 0;
 	}  //ends while
-	   //----- End of event loop -----
+	//----- End of event loop -----
 }
 //------------------------------
 //endfunc Show_About_uLE
@@ -857,7 +857,7 @@ static void ShowDebugInfo(void)
 		post_event = event;
 		event = 0;
 	}  //ends while
-	   //----- End of event loop -----
+	//----- End of event loop -----
 }
 //------------------------------
 //endfunc ShowDebugInfo
@@ -1397,7 +1397,8 @@ static void ShowFont(void)
 			goto end_display;
 done_test:
 			//End of gsKit test section
-*/  //End of commented out section  //Move this line as needed for tests
+*/
+			//End of commented out section  //Move this line as needed for tests
 			//Start of font display section
 			//Now we start to draw all vertical frame lines
 			px = mat_x;
@@ -1430,9 +1431,9 @@ done_test:
 				drawOpSprite(col_1, mat_x, ly, mat_x + mat_w - 1, ly + LINE_THICKNESS - 1);
 				cy += ch_y_stp;
 			}  //ends for each font row
-			   //End of font display section
-		}      //ends if(event||post_event)
-		       //end_display:
+			//End of font display section
+		}  //ends if(event||post_event)
+		   //end_display:
 		drawScr();
 		post_event = event;
 		event = 0;
@@ -1452,7 +1453,7 @@ done_test:
 			break;
 		}
 	}  //ends while
-	   //----- End of event loop -----
+	//----- End of event loop -----
 }
 //------------------------------
 //endfunc ShowFont
@@ -1642,7 +1643,7 @@ int IsSupportedFileType(char *path)
 	if (strchr(path, ':') != NULL) {
 		if (genCmpFileExt(path, "ELF")) {
 			return (checkELFheader(path) >= 0);
-		} else if ( (genCmpFileExt(path, "TXT") || genCmpFileExt(path, "CFG")  || genCmpFileExt(path, "INI") ) || (genCmpFileExt(path, "JPG") || genCmpFileExt(path, "JPEG"))) {
+		} else if ((genCmpFileExt(path, "TXT") || genCmpFileExt(path, "CFG") || genCmpFileExt(path, "INI")) || (genCmpFileExt(path, "JPG") || genCmpFileExt(path, "JPEG"))) {
 			return 1;
 		} else
 			return 0;
@@ -1875,7 +1876,7 @@ Recurse_for_ESR:  //Recurse here for PS2Disc command with ESR disc
 		LastDir[0] = 0;
 		getFilePath(tmp, FALSE);
 		if (tmp[0]) {
-			if ( genCmpFileExt(tmp, "TXT") || genCmpFileExt(tmp, "INI") || genCmpFileExt(tmp, "CFG") ) {
+			if (genCmpFileExt(tmp, "TXT") || genCmpFileExt(tmp, "INI") || genCmpFileExt(tmp, "CFG")) {
 				if (setting->GUI_skin[0]) {
 					GUI_active = 0;
 					loadSkin(BACKGROUND_PIC, 0, 0);
@@ -2435,7 +2436,7 @@ int main(int argc, char *argv[])
 			}
 		}
 	}  //ends while(1)
-	   //----- End of main menu event loop -----
+	//----- End of main menu event loop -----
 }
 //------------------------------
 //endfunc main

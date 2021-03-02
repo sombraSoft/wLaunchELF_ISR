@@ -71,7 +71,7 @@ int file_show = 1;  //dlanor: 0==name_only, 1==name+size+time, 2==title+size+tim
 int file_sort = 1;  //dlanor: 0==none, 1==name, 2==title, 3==mtime
 int size_valid = 0;
 int time_valid = 0;
-char parties[MAX_PARTITIONS][MAX_PART_NAME+1];
+char parties[MAX_PARTITIONS][MAX_PART_NAME + 1];
 char clipPath[MAX_PATH], LastDir[MAX_NAME], marks[MAX_ENTRY];
 FILEINFO clipFiles[MAX_ENTRY];
 int fileMode = FIO_S_IRUSR | FIO_S_IWUSR | FIO_S_IXUSR | FIO_S_IRGRP | FIO_S_IWGRP | FIO_S_IXGRP | FIO_S_IROTH | FIO_S_IWOTH | FIO_S_IXOTH;
@@ -1364,7 +1364,7 @@ int menu(const char *path, FILEINFO *file)
 	menu_len = strlen(LNG(psuPaste)) > menu_len ? strlen(LNG(psuPaste)) : menu_len;
 	menu_len = strlen(LNG(time_manip)) > menu_len ? strlen(LNG(time_manip)) : menu_len;
 	menu_len = (strlen(LNG(Mount)) + 6) > menu_len ? (strlen(LNG(Mount)) + 6) : menu_len;
-	
+
 
 	int menu_ch_w = menu_len + 1;                                 //Total characters in longest menu string
 	int menu_ch_h = NUM_MENU;                                     //Total number of menu lines
@@ -2405,7 +2405,7 @@ non_PSU_RESTORE_init:
 	buffSize = 0x100000;  //First assume buffer size = 1MB (good for HDD)
 	if (!strncmp(out, "mc", 2) || !strncmp(out, "mass", 4) || !strncmp(out, "vmc", 3))
 		buffSize = 131072;  //Use  128KB if writing to USB (Flash RAM writes) or MC (pretty slow).
-	                        //VMC contents should use the same size, as VMCs will often be stored on USB
+		                    //VMC contents should use the same size, as VMCs will often be stored on USB
 	else if (!strncmp(in, "mc", 2))
 		buffSize = 262144;  //Use 256KB if reading from MC (still pretty slow)
 	else if (!strncmp(out, "host", 4))
@@ -3704,9 +3704,7 @@ int getFilePath(char *out, int cnfmode)
 
 
 
-
-
-					   //R1 menu handling is completed above
+					//R1 menu handling is completed above
 				} else if ((!swapKeys && new_pad & PAD_CROSS) || (swapKeys && new_pad & PAD_CIRCLE)) {
 					if (browser_sel != 0 && path[0] != 0 && strcmp(path, "hdd0:/")) {
 						if (marks[browser_sel]) {
@@ -3913,18 +3911,16 @@ int getFilePath(char *out, int cnfmode)
 						iconcolr = COLOR_GRAPH1;
 					} else {
 						iconbase = ICON_FILE;
-						if  (
-							genCmpFileExt(files[top + i].name, "ELF") ||
-							genCmpFileExt(files[top + i].name, "KELF")
-							)
+						if (
+						    genCmpFileExt(files[top + i].name, "ELF") ||
+						    genCmpFileExt(files[top + i].name, "KELF"))
 							iconcolr = COLOR_GRAPH2;
 						else if (
-								genCmpFileExt(files[top + i].name, "TXT")  || 
-								genCmpFileExt(files[top + i].name, "INI")  ||
-						    	genCmpFileExt(files[top + i].name, "CFG")  ||
-								genCmpFileExt(files[top + i].name, "JPG")  || 
-								genCmpFileExt(files[top + i].name, "JPEG")
-								)
+						    genCmpFileExt(files[top + i].name, "TXT") ||
+						    genCmpFileExt(files[top + i].name, "INI") ||
+						    genCmpFileExt(files[top + i].name, "CFG") ||
+						    genCmpFileExt(files[top + i].name, "JPG") ||
+						    genCmpFileExt(files[top + i].name, "JPEG"))
 							iconcolr = COLOR_GRAPH4;
 						else
 							iconcolr = COLOR_GRAPH3;
@@ -4168,7 +4164,7 @@ void subfunc_Paste(char *mess, char *path)
 		}
 	}
 
-//	unmountAll(); //disabled to avoid interference with VMC implementation
+	//	unmountAll(); //disabled to avoid interference with VMC implementation
 
 finished:
 	if (ret < 0) {
