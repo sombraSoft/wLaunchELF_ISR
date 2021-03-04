@@ -3700,8 +3700,8 @@ int getFilePath(char *out, int cnfmode)
 					else if (ret == TIMEMANIP) {
 						time_manip(path, &files[browser_sel], &msg0);
 						browser_pushed = FALSE;
-						browser_repos = TRUE; // TEST
-						browser_cd = TRUE; //TEST
+						browser_repos = TRUE;  // TEST
+						browser_cd = TRUE;     //TEST
 					}
 
 
@@ -3921,7 +3921,7 @@ int getFilePath(char *out, int cnfmode)
 						    genCmpFileExt(files[top + i].name, "TXT") ||
 						    genCmpFileExt(files[top + i].name, "INI") ||
 						    genCmpFileExt(files[top + i].name, "CFG") ||
-							genCmpFileExt(files[top + i].name, "CHT") ||
+						    genCmpFileExt(files[top + i].name, "CHT") ||
 						    genCmpFileExt(files[top + i].name, "JPG") ||
 						    genCmpFileExt(files[top + i].name, "JPEG"))
 							iconcolr = COLOR_GRAPH4;
