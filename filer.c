@@ -3700,6 +3700,8 @@ int getFilePath(char *out, int cnfmode)
 					else if (ret == TIMEMANIP) {
 						time_manip(path, &files[browser_sel], &msg0);
 						browser_pushed = FALSE;
+						browser_repos = TRUE; // TEST
+						browser_cd = TRUE; //TEST
 					}
 
 
