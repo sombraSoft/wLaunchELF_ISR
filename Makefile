@@ -141,6 +141,13 @@ AllowDVDV/AllowDVDV.irx: AllowDVDV
 allowdvdv_irx.s: AllowDVDV/AllowDVDV.irx
 	bin2s $< $@ allowdvdv_irx
 
+format:
+	find . -type f -a \( -iname \*.h -o -iname \*.c \) | xargs clang-format -i
+
+format-check:
+	@! find . -type f -a \( -iname \*.h -o -iname \*.c \) | xargs clang-format -style=file -output-replacements-xml | grep "<replacement " >/dev/null
+
+	
 clean:
 	$(MAKE) -C hdl_info clean
 	$(MAKE) -C ps2host clean
