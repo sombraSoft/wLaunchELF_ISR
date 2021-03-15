@@ -1729,17 +1729,22 @@ u64 getFileSize(const char *path, const FILEINFO *file)
 //endfunc getFileSize
 //--------------------------------------------------------------
 
-
+//this function will allow you to force the date of any memory-card save file...
+//... into the highest date available for a ps2 (1 second before year 2100)
+// ----------=====args=====----------
+// path: mc0:/ or mc1:/
+// const FILEINFO *file = the FILEINFO struct for that save, however, this function only cares about folder name
+//_msg0 = pointer to msg0 to report what happened to the user (uLaunchELF only)
 void time_manip(const char *path, const FILEINFO *file, char **_msg0)
 {
-	int rett, slot;
-	char *funcret;
+	int rett;//this var will be used to store the result of mcSetFileInfo()
+	int slot;
 	slot = path[2] - '0';
+	#define ARRAY_ENTRIES 64
+	static sceMcTblGetDir mcDirAAA[ARRAY_ENTRIES] __attribute__((aligned(64)));// save file properties
+	static sceMcStDateTime new_mtime;//manipulated struct for savefile properties, this will be used to change the date of the save file properties
 //char *result,*end;
-/*=====================================================================================================*/
-#define ARRAY_ENTRIES 64
-	static sceMcTblGetDir mcDirAAA[ARRAY_ENTRIES] __attribute__((aligned(64)));
-	static sceMcStDateTime new_mtime;  //Maxium Timestamp, for the ones who does not speak Spanish
+/*=====================================================================================================*/ 
 	new_mtime.Resv2 = 0;
 	new_mtime.Sec = 59;
 	new_mtime.Min = 59;
@@ -3698,10 +3703,14 @@ int getFilePath(char *out, int cnfmode)
 						submenu_func_GetSize(msg0, path, files);
 					}  //ends GETSIZE
 					else if (ret == TIMEMANIP) {
+						sprintf(msg1, "\n %s  %s  ?", LNG(change_timestamp_of), files[browser_sel].name);
+						if (ynDialog(msg1) < 0)
+						{
 						time_manip(path, &files[browser_sel], &msg0);
 						browser_pushed = FALSE;
 						browser_repos = TRUE;  // TEST
 						browser_cd = TRUE;     //TEST
+						}
 					}
 
 
