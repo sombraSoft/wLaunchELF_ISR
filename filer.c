@@ -3704,7 +3704,7 @@ int getFilePath(char *out, int cnfmode)
 					}  //ends GETSIZE
 					else if (ret == TIMEMANIP) {
 						sprintf(msg1, "\n %s  %s  ?", LNG(change_timestamp_of), files[browser_sel].name);
-						if (ynDialog(msg1) < 0)
+						if (ynDialog(msg1) > 0)
 						{
 						time_manip(path, &files[browser_sel], &msg0);
 						browser_pushed = FALSE;
