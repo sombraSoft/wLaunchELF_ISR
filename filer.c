@@ -1737,14 +1737,14 @@ u64 getFileSize(const char *path, const FILEINFO *file)
 //_msg0 = pointer to msg0 to report what happened to the user (uLaunchELF only)
 void time_manip(const char *path, const FILEINFO *file, char **_msg0)
 {
-	int rett;//this var will be used to store the result of mcSetFileInfo()
+	int rett;  //this var will be used to store the result of mcSetFileInfo()
 	int slot;
 	slot = path[2] - '0';
-	#define ARRAY_ENTRIES 64
-	static sceMcTblGetDir mcDirAAA[ARRAY_ENTRIES] __attribute__((aligned(64)));// save file properties
-	static sceMcStDateTime new_mtime;//manipulated struct for savefile properties, this will be used to change the date of the save file properties
-//char *result,*end;
-/*=====================================================================================================*/ 
+#define ARRAY_ENTRIES 64
+	static sceMcTblGetDir mcDirAAA[ARRAY_ENTRIES] __attribute__((aligned(64)));  // save file properties
+	static sceMcStDateTime new_mtime;                                            //manipulated struct for savefile properties, this will be used to change the date of the save file properties
+	                                                                             //char *result,*end;
+	                                                                             /*=====================================================================================================*/
 	new_mtime.Resv2 = 0;
 	new_mtime.Sec = 59;
 	new_mtime.Min = 59;
@@ -3704,12 +3704,11 @@ int getFilePath(char *out, int cnfmode)
 					}  //ends GETSIZE
 					else if (ret == TIMEMANIP) {
 						sprintf(msg1, "\n\n %s  [%s]  ?\n", LNG(change_timestamp_of), files[browser_sel].name);
-						if (ynDialog(msg1) > 0)
-						{
-						time_manip(path, &files[browser_sel], &msg0);
-						browser_pushed = FALSE;
-						browser_repos = TRUE;  // TEST
-						browser_cd = TRUE;     //TEST
+						if (ynDialog(msg1) > 0) {
+							time_manip(path, &files[browser_sel], &msg0);
+							browser_pushed = FALSE;
+							browser_repos = TRUE;  // TEST
+							browser_cd = TRUE;     //TEST
 						}
 					}
 
@@ -3929,7 +3928,7 @@ int getFilePath(char *out, int cnfmode)
 						else if (
 						    genCmpFileExt(files[top + i].name, "TXT") ||
 						    genCmpFileExt(files[top + i].name, "INI") ||
-							genCmpFileExt(files[top + i].name, "CNF") ||
+						    genCmpFileExt(files[top + i].name, "CNF") ||
 						    genCmpFileExt(files[top + i].name, "CFG") ||
 						    genCmpFileExt(files[top + i].name, "CHT") ||
 						    genCmpFileExt(files[top + i].name, "JPG") ||
