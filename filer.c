@@ -38,6 +38,7 @@ enum {
 	MOUNTVMC1,
 	GETSIZE,
 	TIMEMANIP,
+	TITLECFG,
 	NUM_MENU
 } R1_menu_enum;
 
@@ -1426,6 +1427,20 @@ int menu(const char *path, FILEINFO *file)
 		enable[TIMEMANIP] = FALSE;
 	}  //enable time manip, otherwise disable it
 
+	if ( //if
+			( //we're on storage devices supported by OPL title.cfg
+				(!strncmp(path, "mass", 4) ) ||
+		 		(!strncmp(path, "hdd0:/+OPL/APPS", 15)) ||
+		  		(!strncmp(path, "hdd0:/PP.OPL/APPS", 17))
+			)
+			&&
+			( //and we're pointing into an ELF file
+			 genCmpFileExt(file->name, "ELF") || genCmpFileExt(file->name, "elf")
+			)
+		) 
+		enable[TITLECFG] = TRUE;
+		 else 
+		enable[TITLECFG] = FALSE;
 
 
 	if ((file->stats.AttrFile & sceMcFileAttrSubdir) || !strncmp(path, "vmc", 3) || !strncmp(path, "mc", 2)) {
@@ -1520,6 +1535,8 @@ int menu(const char *path, FILEINFO *file)
 					strcpy(tmp, LNG(Get_Size));
 				else if (i == TIMEMANIP)
 					strcpy(tmp, LNG(time_manip));
+				else if (i == TITLECFG)
+					strcpy(tmp, "title.cfg");
 
 				if (enable[i])
 					color = setting->color[COLOR_TEXT];
@@ -1766,6 +1783,29 @@ void time_manip(const char *path, const FILEINFO *file, char **_msg0)
 }  // TIMEMANIP
 //------------------------------
 //endfunc time_manip
+//--------------------------------------------------------------
+
+void make_title_cfg(const char *path, const FILEINFO *file, char **_msg0)
+{
+	char* text; //genwrite buffer
+	char* file_noext; //filename without extension will be stored here
+		strncpy(file_noext, file->name, strlen(file->name)-4);
+	char* title_cfg_path;
+		sprintf(title_cfg_path,"%s/%s", path ,"title.cfg");
+	int fd; //genopen return value
+	
+	
+	fd = genOpen(title_cfg_path, O_CREAT | O_WRONLY | O_TRUNC);
+		sprintf(text, "title=%s\nboot=%s\n",file_noext ,file->name);
+	
+	genWrite(fd, text, strlen(text));
+	genClose(fd);
+	
+	if (!strncmp(filePath, "pfs", 3))
+		unmountParty(filePath[3] - '0');
+}
+//------------------------------
+//endfunc make_title_cfg
 //--------------------------------------------------------------
 
 int delete (const char *path, const FILEINFO *file)
@@ -3710,6 +3750,11 @@ int getFilePath(char *out, int cnfmode)
 							browser_repos = TRUE;  // TEST
 							browser_cd = TRUE;     //TEST
 						}
+					} else if (ret == TITLECFG) {
+						make_title_cfg(path, &files[browser_sel], &msg0);
+						browser_pushed = FALSE;
+						browser_repos = TRUE;  // TEST
+						browser_cd = TRUE;     //TEST
 					}
 
 
