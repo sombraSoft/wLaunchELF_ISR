@@ -1801,8 +1801,8 @@ void make_title_cfg(const char *path, const FILEINFO *file, char **_msg0)
 	genWrite(fd, text, strlen(text));
 	genClose(fd);
 	
-	if (!strncmp(filePath, "pfs", 3))
-		unmountParty(filePath[3] - '0');
+	if (!strncmp(path, "pfs", 3))
+		unmountParty(path[3] - '0');
 }
 //------------------------------
 //endfunc make_title_cfg
