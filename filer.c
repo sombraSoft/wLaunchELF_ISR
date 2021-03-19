@@ -1789,20 +1789,20 @@ void make_title_cfg(const char *path, const FILEINFO *file, char **_msg0)
 {
 	char* text; //genwrite buffer
 	char* file_noext; //filename without extension will be stored here
-		strncpy(file_noext, file->name, strlen(file->name)-4);
 	char* title_cfg_path;
-		sprintf(title_cfg_path,"%s/%s", path ,"title.cfg");
 	int fd; //genopen return value
-	
-	
+
+	strncpy(file_noext, file->name, strlen(file->name)-4);
+	sprintf(title_cfg_path,"%s/%s", path ,"title.cfg");
 	fd = genOpen(title_cfg_path, O_CREAT | O_WRONLY | O_TRUNC);
 		sprintf(text, "title=%s\nboot=%s\n",file_noext ,file->name);
-	
+	sprintf(_msg0, "%d", fd)
 	genWrite(fd, text, strlen(text));
 	genClose(fd);
 	
 	if (!strncmp(path, "pfs", 3))
 		unmountParty(path[3] - '0');
+		printf("\n file_noext=%s\ntitle_cfg_path=%s\ntext=%s",file_noext, title_cfg_path,text)
 }
 //------------------------------
 //endfunc make_title_cfg
