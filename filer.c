@@ -1796,7 +1796,7 @@ void make_title_cfg(const char *path, const FILEINFO *file, char **_msg0)
 	sprintf(title_cfg_path,"%s/%s", path ,"title.cfg");
 	fd = genOpen(title_cfg_path, O_CREAT | O_WRONLY | O_TRUNC);
 		sprintf(text, "title=%s\nboot=%s\n",file_noext ,file->name);
-	sprintf(_msg0, "%d", fd)
+	sprintf(_msg0, "%d", fd);
 	genWrite(fd, text, strlen(text));
 	genClose(fd);
 	
