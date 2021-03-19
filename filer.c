@@ -1802,7 +1802,7 @@ void make_title_cfg(const char *path, const FILEINFO *file, char **_msg0)
 	
 	if (!strncmp(path, "pfs", 3))
 		unmountParty(path[3] - '0');
-		printf("\n file_noext=%s\ntitle_cfg_path=%s\ntext=%s",file_noext, title_cfg_path,text)
+		printf("\n file_noext=%s\ntitle_cfg_path=%s\ntext=%s",file_noext, title_cfg_path,text);
 }
 //------------------------------
 //endfunc make_title_cfg
