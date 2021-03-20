@@ -1428,11 +1428,7 @@ int menu(const char *path, FILEINFO *file)
 	}  //enable time manip, otherwise disable it
 
 	if ( //if
-			( //we're on storage devices supported by OPL title.cfg
-				(!strncmp(path, "mass", 4) ) ||
-		 		(!strncmp(path, "hdd0:/+OPL/APPS", 15)) ||
-		  		(!strncmp(path, "hdd0:/PP.OPL/APPS", 17))
-			)
+			( (!strncmp(path, "mass", 4) ))
 			&&
 			( //and we're pointing into an ELF file
 			 genCmpFileExt(file->name, "ELF") || genCmpFileExt(file->name, "elf")
@@ -1785,24 +1781,24 @@ void time_manip(const char *path, const FILEINFO *file, char **_msg0)
 //endfunc time_manip
 //--------------------------------------------------------------
 
-void make_title_cfg(const char *path, const FILEINFO *file, char **_msg0)
+void make_title_cfg(const char *path, const char* filename, char** _msg0)
 {
 	char* text; //genwrite buffer
 	char* file_noext; //filename without extension will be stored here
+	int fd; //genOpen() return value
 	char* title_cfg_path;
-	int fd; //genopen return value
-
-	strncpy(file_noext, file->name, strlen(file->name)-4);
-	sprintf(title_cfg_path,"%s/%s", path ,"title.cfg");
+		sprintf(title_cfg_path,"%stitle.cfg",path);
+	strncpy(file_noext, filename, strlen(filename)-4);
+	
 	fd = genOpen(title_cfg_path, O_CREAT | O_WRONLY | O_TRUNC);
-		sprintf(text, "title=%s\nboot=%s\n",file_noext ,file->name);
-	sprintf(_msg0, "%d", fd);
+		sprintf(text, "title=%s\nboot=%s\n",file_noext ,filename);
+	sprintf(_msg0, "fd=%d", fd);
 	genWrite(fd, text, strlen(text));
 	genClose(fd);
 	
 	if (!strncmp(path, "pfs", 3))
 		unmountParty(path[3] - '0');
-		printf("\n file_noext=%s\ntitle_cfg_path=%s\ntext=%s",file_noext, title_cfg_path,text);
+		//printf("\n file_noext=%s\ntitle_cfg_path=%s\ntext=%s",file_noext, title_cfg_path,text);
 }
 //------------------------------
 //endfunc make_title_cfg
