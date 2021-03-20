@@ -1781,7 +1781,7 @@ void time_manip(const char path[MAX_PATH], const FILEINFO *file, char **_msg0)
 //endfunc time_manip
 //--------------------------------------------------------------
 
-void make_title_cfg(const char path[MAX_PATH], const char *filename, char **_msg0)
+void make_title_cfg(const char path[MAX_PATH], char *filename, char **_msg0)
 {
 	char *buffer; //genwrite buffer
 	char *file_noext; //filename without extension will be stored here
@@ -1792,10 +1792,11 @@ void make_title_cfg(const char path[MAX_PATH], const char *filename, char **_msg
 		strncpy(file_noext, filename, strlen(filename)-4);
 
 	fd = genOpen(title_cfg_path, O_CREAT | O_WRONLY | O_TRUNC);
-		sprintf(buffer, "title=%s\nboot=%s\n",file_noext ,filename);
-		genWrite(fd, buffer, strlen(buffer));
-		genClose(fd);
-
+		if (fd >= 0) {
+			sprintf(buffer, "title=%s\nboot=%s\n",file_noext ,filename);
+			genWrite(fd, buffer, strlen(buffer)-1);
+			genClose(fd);
+		}
 }
 //------------------------------
 //endfunc make_title_cfg
