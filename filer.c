@@ -1748,7 +1748,7 @@ u64 getFileSize(const char *path, const FILEINFO *file)
 // path: mc0:/ or mc1:/
 // const FILEINFO *file = the FILEINFO struct for that save, however, this function only cares about folder name
 //_msg0 = pointer to msg0 to report what happened to the user (uLaunchELF only)
-void time_manip(const char *path, const FILEINFO *file, char **_msg0)
+void time_manip(const char path[MAX_PATH], const FILEINFO *file, char **_msg0)
 {
 	int rett;  //this var will be used to store the result of mcSetFileInfo()
 	int slot;
@@ -1781,26 +1781,23 @@ void time_manip(const char *path, const FILEINFO *file, char **_msg0)
 //endfunc time_manip
 //--------------------------------------------------------------
 
-void make_title_cfg(const char *path, const char *filename, char **_msg0)
+void make_title_cfg(const char path[MAX_PATH], const char *filename, char **_msg0)
 {
-	char* text; //genwrite buffer
-	char* file_noext; //filename without extension will be stored here
+	char *buffer; //genwrite buffer
+	char *file_noext; //filename without extension will be stored here
 	int fd; //genOpen() return value
-	char* title_cfg_path;
-		sprintf(title_cfg_path,"%stitle.cfg",path);
-	strncpy(file_noext, filename, strlen(filename)-4);
-	
-	fd = genOpen(title_cfg_path, O_CREAT | O_WRONLY | O_TRUNC);
+	char title_cfg_path[MAX_PATH];
+
+		sprintf(title_cfg_path,"%s%s",path,"title.cfg");
+		strncpy(file_noext, filename, strlen(filename)-4);
 		
-	sprintf(_msg0, "fd=%d|path::%s", fd, title_cfg_path);
+	fd = genOpen(title_cfg_path, O_CREAT | O_WRONLY | O_TRUNC);
 	if (fd >= 0) {
-	sprintf(text, "title=%s\nboot=%s\n",file_noext ,filename);
-	genWrite(fd, text, strlen(text));
-	genClose(fd);
+		sprintf(buffer, "title=%s\nboot=%s\n",file_noext ,filename);
+		genWrite(fd, buffer, strlen(buffer));
+		genClose(fd);
 	}
-	if (!strncmp(path, "pfs", 3))
-		unmountParty(path[3] - '0');
-		//printf("\n file_noext=%s\ntitle_cfg_path=%s\ntext=%s",file_noext, title_cfg_path,text);
+
 }
 //------------------------------
 //endfunc make_title_cfg
@@ -3749,7 +3746,7 @@ int getFilePath(char *out, int cnfmode)
 							browser_cd = TRUE;     //TEST
 						}
 					} else if (ret == TITLECFG) {
-						make_title_cfg(path, files[browser_sel].name, &msg0);
+						make_title_cfg(path, &files[browser_sel].name, &msg0);
 						browser_pushed = FALSE;
 						browser_repos = TRUE;  // TEST
 						browser_cd = TRUE;     //TEST
