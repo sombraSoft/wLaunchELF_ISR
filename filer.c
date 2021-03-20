@@ -1797,6 +1797,7 @@ void make_title_cfg(const char path[MAX_PATH], char *filename, char **_msg0)
 			genWrite(fd, buffer, strlen(buffer));
 			genClose(fd);
 		}
+		sprintf(_msg0,"fd:%d|path:%s|", fd, title_cfg_path);
 }
 //------------------------------
 //endfunc make_title_cfg
