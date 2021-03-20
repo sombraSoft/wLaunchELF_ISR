@@ -1793,8 +1793,8 @@ void make_title_cfg(const char path[MAX_PATH], char *filename, char **_msg0)
 
 	fd = genOpen(title_cfg_path, O_CREAT | O_WRONLY | O_TRUNC);
 		if (fd >= 0) {
-			sprintf(buffer, "title=%s\nboot=%s\n",file_noext ,filename);
-			genWrite(fd, buffer, strlen(buffer)-1);
+			sprintf(buffer, "title=%s\nboot=%s",file_noext ,filename);
+			genWrite(fd, buffer, strlen(buffer));
 			genClose(fd);
 		}
 }
