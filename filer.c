@@ -1793,9 +1793,10 @@ void make_title_cfg(const char *path, const char* filename, char** _msg0)
 	fd = genOpen(title_cfg_path, O_CREAT | O_WRONLY | O_TRUNC);
 		sprintf(text, "title=%s\nboot=%s\n",file_noext ,filename);
 	sprintf(_msg0, "fd=%d", fd);
+	if (fd >= 0) {
 	genWrite(fd, text, strlen(text));
 	genClose(fd);
-	
+	}
 	if (!strncmp(path, "pfs", 3))
 		unmountParty(path[3] - '0');
 		//printf("\n file_noext=%s\ntitle_cfg_path=%s\ntext=%s",file_noext, title_cfg_path,text);
@@ -3747,7 +3748,7 @@ int getFilePath(char *out, int cnfmode)
 							browser_cd = TRUE;     //TEST
 						}
 					} else if (ret == TITLECFG) {
-						make_title_cfg(path, &files[browser_sel], &msg0);
+						make_title_cfg(path, files[browser_sel].name, &msg0);
 						browser_pushed = FALSE;
 						browser_repos = TRUE;  // TEST
 						browser_cd = TRUE;     //TEST
