@@ -1781,7 +1781,7 @@ void time_manip(const char *path, const FILEINFO *file, char **_msg0)
 //endfunc time_manip
 //--------------------------------------------------------------
 
-void make_title_cfg(const char *path, const char* filename, char** _msg0)
+void make_title_cfg(const char *path, const char *filename, char **_msg0)
 {
 	char* text; //genwrite buffer
 	char* file_noext; //filename without extension will be stored here
@@ -1792,7 +1792,7 @@ void make_title_cfg(const char *path, const char* filename, char** _msg0)
 	
 	fd = genOpen(title_cfg_path, O_CREAT | O_WRONLY | O_TRUNC);
 		sprintf(text, "title=%s\nboot=%s\n",file_noext ,filename);
-	sprintf(_msg0, "fd=%d| path=%s", fd, title_cfg_path);
+	sprintf(_msg0, "fd=%d|path:%s", fd, title_cfg_path);
 	if (fd >= 0) {
 	genWrite(fd, text, strlen(text));
 	genClose(fd);
