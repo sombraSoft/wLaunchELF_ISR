@@ -38,7 +38,6 @@ enum {
 	MOUNTVMC1,
 	GETSIZE,
 	TIMEMANIP,
-	TITLECFG,
 	NUM_MENU
 } R1_menu_enum;
 
@@ -1427,16 +1426,6 @@ int menu(const char *path, FILEINFO *file)
 		enable[TIMEMANIP] = FALSE;
 	}  //enable time manip, otherwise disable it
 
-	if ( //if
-			( (!strncmp(path, "mass", 4) ))
-			&&
-			( //and we're pointing into an ELF file
-			 genCmpFileExt(file->name, "ELF") || genCmpFileExt(file->name, "elf")
-			)
-		) 
-		enable[TITLECFG] = TRUE;
-		 else 
-		enable[TITLECFG] = FALSE;
 
 
 	if ((file->stats.AttrFile & sceMcFileAttrSubdir) || !strncmp(path, "vmc", 3) || !strncmp(path, "mc", 2)) {
@@ -1531,8 +1520,6 @@ int menu(const char *path, FILEINFO *file)
 					strcpy(tmp, LNG(Get_Size));
 				else if (i == TIMEMANIP)
 					strcpy(tmp, LNG(time_manip));
-				else if (i == TITLECFG)
-					strcpy(tmp, "title.cfg");
 
 				if (enable[i])
 					color = setting->color[COLOR_TEXT];
@@ -1748,16 +1735,16 @@ u64 getFileSize(const char *path, const FILEINFO *file)
 // path: mc0:/ or mc1:/
 // const FILEINFO *file = the FILEINFO struct for that save, however, this function only cares about folder name
 //_msg0 = pointer to msg0 to report what happened to the user (uLaunchELF only)
-void time_manip(const char path[MAX_PATH], const FILEINFO *file, char **_msg0)
+void time_manip(const char *path, const FILEINFO *file, char **_msg0)
 {
-	int rett;  //this var will be used to store the result of mcSetFileInfo()
+	int rett;//this var will be used to store the result of mcSetFileInfo()
 	int slot;
 	slot = path[2] - '0';
-#define ARRAY_ENTRIES 64
-	static sceMcTblGetDir mcDirAAA[ARRAY_ENTRIES] __attribute__((aligned(64)));  // save file properties
-	static sceMcStDateTime new_mtime;                                            //manipulated struct for savefile properties, this will be used to change the date of the save file properties
-	                                                                             //char *result,*end;
-	                                                                             /*=====================================================================================================*/
+	#define ARRAY_ENTRIES 64
+	static sceMcTblGetDir mcDirAAA[ARRAY_ENTRIES] __attribute__((aligned(64)));// save file properties
+	static sceMcStDateTime new_mtime;//manipulated struct for savefile properties, this will be used to change the date of the save file properties
+//char *result,*end;
+/*=====================================================================================================*/ 
 	new_mtime.Resv2 = 0;
 	new_mtime.Sec = 59;
 	new_mtime.Min = 59;
@@ -1779,28 +1766,6 @@ void time_manip(const char path[MAX_PATH], const FILEINFO *file, char **_msg0)
 }  // TIMEMANIP
 //------------------------------
 //endfunc time_manip
-//--------------------------------------------------------------
-
-void make_title_cfg(const char path[MAX_PATH], char *filename, char **_msg0)
-{
-	char *buffer; //genwrite buffer
-	char *file_noext; //filename without extension will be stored here
-	int fd; //genOpen() return value
-	char title_cfg_path[MAX_PATH];
-
-		sprintf(title_cfg_path,"%s%s",path,"title.cfg");
-		strncpy(file_noext, filename, strlen(filename)-4);
-
-	fd = genOpen(title_cfg_path, O_CREAT | O_WRONLY | O_TRUNC);
-		if (fd >= 0) {
-			sprintf(buffer, "title=%s\nboot=%s",file_noext ,filename);
-			genWrite(fd, buffer, strlen(buffer));
-			genClose(fd);
-		}
-		sprintf(_msg0,"fd:%d|path:%s|", fd, title_cfg_path);
-}
-//------------------------------
-//endfunc make_title_cfg
 //--------------------------------------------------------------
 
 int delete (const char *path, const FILEINFO *file)
@@ -3739,17 +3704,13 @@ int getFilePath(char *out, int cnfmode)
 					}  //ends GETSIZE
 					else if (ret == TIMEMANIP) {
 						sprintf(msg1, "\n\n %s  [%s]  ?\n", LNG(change_timestamp_of), files[browser_sel].name);
-						if (ynDialog(msg1) > 0) {
-							time_manip(path, &files[browser_sel], &msg0);
-							browser_pushed = FALSE;
-							browser_repos = TRUE;  // TEST
-							browser_cd = TRUE;     //TEST
-						}
-					} else if (ret == TITLECFG) {
-						make_title_cfg(path, &files[browser_sel].name, &msg0);
+						if (ynDialog(msg1) > 0)
+						{
+						time_manip(path, &files[browser_sel], &msg0);
 						browser_pushed = FALSE;
 						browser_repos = TRUE;  // TEST
 						browser_cd = TRUE;     //TEST
+						}
 					}
 
 
@@ -3968,7 +3929,7 @@ int getFilePath(char *out, int cnfmode)
 						else if (
 						    genCmpFileExt(files[top + i].name, "TXT") ||
 						    genCmpFileExt(files[top + i].name, "INI") ||
-						    genCmpFileExt(files[top + i].name, "CNF") ||
+							genCmpFileExt(files[top + i].name, "CNF") ||
 						    genCmpFileExt(files[top + i].name, "CFG") ||
 						    genCmpFileExt(files[top + i].name, "CHT") ||
 						    genCmpFileExt(files[top + i].name, "JPG") ||
