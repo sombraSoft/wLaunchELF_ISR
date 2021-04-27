@@ -1,4 +1,4 @@
-name: Automated-Build
+name: Automated-Build (moron mode)
 
 on:
   workflow_dispatch:
@@ -27,7 +27,7 @@ jobs:
 
     - name: Compile wLaunchELF
       run: |
-        make
+        make TIME_MANIP=MORON_MODE
 
     - name: Get short SHA
       id: slug
@@ -37,16 +37,16 @@ jobs:
       if: ${{ success() }}
       uses: actions/upload-artifact@v2
       with:
-        name: wLaunchELF-${{ steps.slug.outputs.sha8 }}
+        name: wLaunchELF-moron-${{ steps.slug.outputs.sha8 }}
         path: |
               *.ELF
 
-    - name: Create release
-      if: github.ref == 'refs/heads/master'
-      uses: marvinpinto/action-automatic-releases@latest
-      with:
-        repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        automatic_release_tag: "latest"
-        title: "Latest automated build"
-        files: |
-               *.ELF
+ #   - name: Create release
+ #     if: github.ref == 'refs/heads/master'
+ #     uses: marvinpinto/action-automatic-releases@latest
+ #     with:
+ #       repo_token: "${{ secrets.GITHUB_TOKEN }}"
+ #       automatic_release_tag: "latest"
+ #       title: "Latest automated build"
+ #       files: |
+ #              *.ELF

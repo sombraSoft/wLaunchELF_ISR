@@ -1,6 +1,14 @@
 #ifndef LAUNCHELF_H
 #define LAUNCHELF_H
 
+#define HACK_FOLDER "BOOT-OPENTUNA"
+
+#ifdef MORON_MODE
+#define ISR_FLAGS "1"
+#else
+#define ISR_FLAGS "0"
+#endif
+
 #define ULE_VERSION "4.43x_isr"
 //#ifndef ULE_VERDATE
 //#define ULE_VERDATE __DATE__

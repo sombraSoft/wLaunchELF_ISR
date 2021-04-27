@@ -3,8 +3,15 @@
 SMB = 0
 #set SMB to 1 to build uLe with smb support
 
+
+ifeq ($(TIME_MANIP),MORON_MODE)
+EE_BIN = ULE-UNC-MORON.ELF
+EE_BIN_PKD = ULE-MORON.ELF
+else
 EE_BIN = ULE-UNC.ELF
 EE_BIN_PKD = ULE.ELF
+endif
+
 EE_OBJS = main.o pad.o config.o elf.o draw.o loader_elf.o filer.o \
 	poweroff_irx.o iomanx_irx.o filexio_irx.o ps2atad_irx.o ps2dev9_irx.o ps2ip_irx.o\
 	ps2smap_irx.o ps2hdd_irx.o ps2fs_irx.o ps2netfs_irx.o usbd_irx.o usbhdfsd_irx.o mcman_irx.o mcserv_irx.o\
@@ -25,6 +32,11 @@ EE_CFLAGS := -mgpopt -G10240 -G0
 ifeq ($(SMB),1)
 	EE_CFLAGS += -DSMB
 endif
+
+ifeq ($(TIME_MANIP),MORON_MODE)
+	EE_CFLAGS += -DMORON_MODE
+endif
+
 
 .PHONY: all run reset clean rebuild
 
