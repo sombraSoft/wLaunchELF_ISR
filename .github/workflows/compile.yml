@@ -63,7 +63,8 @@ jobs:
     - name: Compile wLaunchELF
       run: |
         SCH=${GITHUB_SHA::7}
-        make TMANIP=1 LANG=SPA
+        echo "#include \"Lang/SPA.LNG\"">lang.h
+        make TMANIP=1 
         zip wLaunchELF-$SCH *.ELF
     - name: Get short SHA
       id: slug
