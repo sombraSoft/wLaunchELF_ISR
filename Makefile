@@ -30,11 +30,11 @@ endif
 
 
 ifeq ($(LANG),SPA)
-	EE_CFLAGS += -DLANG_SPA
+	EE_CFLAGS += -DWLE_LANG_SPA
 endif
 
 ifeq ($(LANG),ENG)
-	EE_CFLAGS += -DLANG_ENG
+	EE_CFLAGS += -DWLE_LANG_ENG
 endif
 
 ifeq ($(TMANIP),1)
