@@ -29,10 +29,6 @@ ifeq ($(SMB),1)
 endif
 
 
-ifeq ($(LANG),SPA)
-	EE_CFLAGS += -DWLE_LANG_SPA
-	EE_CFLAGS += -DCUSTOM_LNG
-endif
 
 ifeq ($(TMANIP),1)
  EE_CFLAGS += -DTMANIP
