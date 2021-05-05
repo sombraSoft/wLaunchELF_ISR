@@ -34,11 +34,6 @@ ifeq ($(LANG),SPA)
 	EE_CFLAGS += -DCUSTOM_LNG
 endif
 
-ifeq ($(LANG),ENG)
-	EE_CFLAGS += -DWLE_LANG_ENG
-	EE_CFLAGS += -DCUSTOM_LNG
-endif
-
 ifeq ($(TMANIP),1)
  EE_CFLAGS += -DTMANIP
 endif
