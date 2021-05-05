@@ -74,7 +74,7 @@ jobs:
       if: ${{ success() }}
       uses: actions/upload-artifact@v2
       with:
-        name: wLaunchELF-${{ steps.slug.outputs.sha8 }}
+        name: wLaunchELF-spanish-${{ steps.slug.outputs.sha8 }}
         path: |
               *.zip
     - name: Create release
