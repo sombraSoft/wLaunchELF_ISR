@@ -64,7 +64,7 @@ jobs:
       run: |
         SCH=${GITHUB_SHA::7}
         make TMANIP=1 LANG=SPA
-        zip wLaunchELF-$SCH
+        zip wLaunchELF-$SCH *.ELF
     - name: Get short SHA
       id: slug
       run: echo "::set-output name=sha8::$(echo ${GITHUB_SHA} | cut -c1-8)"
