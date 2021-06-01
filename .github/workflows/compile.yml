@@ -101,6 +101,6 @@ jobs:
       uses: peter-evans/repository-dispatch@v1
       with:
           token: ${{ secrets.IUS }}
-          repository: ${{ secrets.IUS }} 
+          repository: ${{ matrix.repos }} 
           event-type: Component_update
           client-payload: '{"sha": "${{ github.sha }}"}'
