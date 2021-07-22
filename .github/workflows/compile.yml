@@ -94,7 +94,7 @@ jobs:
     needs: [build]
     strategy:
       matrix:
-        repos: [israpps/FreeMcBoot-Installer, israpps/Funtuna-Fork]
+        repos: [israpps/FreeMcBoot-Installer, israpps/Funtuna-Fork, israpps/DiagBox]
     steps:
     - name: trigger israpps auto-update system
       if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
