@@ -1,6 +1,6 @@
 #ifndef LAUNCHELF_H
 #define LAUNCHELF_H
-
+#define HACK_FOLDER "BXEXEC-OPENTUNA"
 #define ULE_VERSION "v4.43x_isr"
 //#ifndef ULE_VERDATE
 //#define ULE_VERDATE __DATE__
