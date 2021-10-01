@@ -13,6 +13,9 @@ It features:
 
 > this mod is already bundled on any mod/project/repack made by me (and it´s auto-updated if that project is hosted here on github)
 
+### DOWNLOAD:
+- [Normal version](https://github.com/israpps/wLaunchELF_ISR/releases/tag/latest)
+- [Hardcoded Spanish](https://github.com/israpps/wLaunchELF_ISR/releases/tag/espa%C3%B1ol)
 
 # **wLaunchELF**
 wLaunchELF, formerly known as uLaunchELF, also known as wLE or uLE (abbreviated), is an open source file manager and executable launcher for the Playstation 2 console based off of the original LaunchELF. It contains many different features, including a text editor, hard drive manager, as well as network support, and much more.
