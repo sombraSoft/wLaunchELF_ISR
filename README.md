@@ -1,5 +1,5 @@
 [![Automated-Build](https://github.com/israpps/wLaunchELF_ISR/actions/workflows/compile.yml/badge.svg)](https://github.com/israpps/wLaunchELF_ISR/actions/workflows/compile.yml)
-
+![GitHub all releases](https://img.shields.io/github/downloads/israpps/wLaunchELF_ISR/total?logo=github)
 # __About this mod__
 this uLaunchELF mod was my first PS2 project.
 
