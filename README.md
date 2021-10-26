@@ -1,3 +1,4 @@
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/5e07db76c668493d888a7f9b97d79821)](https://app.codacy.com/gh/israpps/wLaunchELF_ISR?utm_source=github.com&utm_medium=referral&utm_content=israpps/wLaunchELF_ISR&utm_campaign=Badge_Grade_Settings)
 [![Automated-Build](https://github.com/israpps/wLaunchELF_ISR/actions/workflows/compile.yml/badge.svg)](https://github.com/israpps/wLaunchELF_ISR/actions/workflows/compile.yml)
 ![GitHub all releases](https://img.shields.io/github/downloads/israpps/wLaunchELF_ISR/total?logo=github)
 # __About this mod__
