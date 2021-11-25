@@ -369,7 +369,7 @@ int MenuParty(PARTYINFO Info)
 		enable[RENAME] = FALSE;
 		enable[EXPAND] = FALSE;
 	}
-	if (Info.Treatment == TREAT_HDL_RAW) {
+	/*if (Info.Treatment == TREAT_HDL_RAW) {
 		enable[EXPAND] = FALSE;
 	}
 	if (Info.Treatment == TREAT_HDL_GAME) {
@@ -377,8 +377,8 @@ int MenuParty(PARTYINFO Info)
 	}
 	if (Info.Treatment == TREAT_NOACCESS) {
 		enable[EXPAND] = FALSE;
-	}
-
+	}//*/
+	enable[EXPAND] = FALSE;
 	for (sel = 0; sel < NUM_MENU; sel++)
 		if (enable[sel] == TRUE)
 			break;
