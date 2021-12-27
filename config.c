@@ -1937,7 +1937,6 @@ static void saveNetworkSettings(char *Message)
 		mcMkDir(0, 0, "SYS-CONF");
 		mcSync(0, NULL, &ret);
 	}
-z
 	if (in_fd >= 0) {
 
 		size = genLseek(in_fd, 0, SEEK_END);

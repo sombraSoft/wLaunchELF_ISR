@@ -1796,7 +1796,7 @@ void make_title_cfg(const char *path, const FILEINFO *file, char **_msg0)
 {
 	int fd;
 	char title_cfg_buffer[64];
-	sprintf(title_cfg_buffer,"title=%s\nboot=%s",strrchr(file->name,'.'));
+	sprintf(title_cfg_buffer,"title=%s\nboot=%s", strrchr(file->name,'.'), file->name);
 	char new_title_cfg[MAX_PATH] = path;
 	strcat(new_title_cfg, "title.cfg");
 	if ((fd = genOpen(new_title_cfg, O_CREAT | O_WRONLY | O_TRUNC)) < 0) {
