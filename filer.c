@@ -1795,8 +1795,10 @@ u64 getFileSize(const char *path, const FILEINFO *file)
 void make_title_cfg(const char *path, const FILEINFO *file, char **_msg0)
 {
 	int fd;
-	char title_cfg_buffer[64];
-	sprintf(title_cfg_buffer,"title=%s\nboot=%s", strrchr(file->name,'.'), file->name);
+	char title_cfg_buffer[128], ELF_NAME[64];
+	strcpy(ELF_NAME, file->name);
+	ELF_NAME[strlen(ELF_NAME)-4] = '\0';//kill extension, we can do this freely without checking string length because feature is only enabled on .ELF files
+	sprintf(title_cfg_buffer,"title=%s\nboot=%s", ELF_NAME, file->name);
 	char new_title_cfg[MAX_PATH];
 	strcpy(new_title_cfg,path);
 	strcat(new_title_cfg, "title.cfg");
@@ -1804,7 +1806,7 @@ void make_title_cfg(const char *path, const FILEINFO *file, char **_msg0)
 			sprintf(_msg0, "Error opening title.cfg");
 			return;
 		} else {
-			genWrite(fd,title_cfg_buffer,sizeof(title_cfg_buffer));
+			genWrite(fd, title_cfg_buffer, strlen(title_cfg_buffer));
 			genClose(fd);
 		}
 

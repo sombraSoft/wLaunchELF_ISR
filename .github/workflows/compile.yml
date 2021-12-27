@@ -90,6 +90,7 @@ jobs:
                *.ELF
                
   trigger-auto-update:
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     needs: [build]
     strategy:
