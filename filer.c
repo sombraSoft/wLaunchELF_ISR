@@ -1747,7 +1747,7 @@ u64 getFileSize(const char *path, const FILEINFO *file)
 // const FILEINFO *file = the FILEINFO struct for that save, however, this function only cares about folder name
 //_msg0 = pointer to msg0 to report what happened to the user (uLaunchELF only)
 //#ifdef TMANIP
-	void time_manip(const char *path, const FILEINFO *file, char *_msg0)
+	void time_manip(const char *path, const FILEINFO *file, char **_msg0)
 	{
 		int rett;  //this var will be used to store the result of mcSetFileInfo()
 		int slot;
@@ -1792,12 +1792,13 @@ u64 getFileSize(const char *path, const FILEINFO *file)
 	//
 //#endif //TMANIP
 
-void make_title_cfg(const char *path, const FILEINFO *file, char *_msg0)
+void make_title_cfg(const char *path, const FILEINFO *file, char **_msg0)
 {
 	int fd;
 	char title_cfg_buffer[64];
 	sprintf(title_cfg_buffer,"title=%s\nboot=%s", strrchr(file->name,'.'), file->name);
-	char new_title_cfg[MAX_PATH] = path;
+	char new_title_cfg[MAX_PATH];
+	strcpy(new_title_cfg,path);
 	strcat(new_title_cfg, "title.cfg");
 	if ((fd = genOpen(new_title_cfg, O_CREAT | O_WRONLY | O_TRUNC)) < 0) {
 			sprintf(_msg0, "Error opening title.cfg");
