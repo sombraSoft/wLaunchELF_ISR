@@ -759,6 +759,27 @@ static void load_smbman(void)
 //---------------------------------------------------------------------------
 #include "SMB_test.c"
 #endif
+char* GetMGFolderLetter(char region){
+	char err[10] = "ERROR (R)"
+	switch(region){
+		case 'C':
+			return "BCEXEC-SYSTEM";
+			break;
+		case 'J':
+			return "BIEXEC-SYSTEM";
+			break;
+		case 'H':
+		case 'A':
+			return "BAEXEC-SYSTEM";
+			break;
+		case 'E':
+			return "BEEXEC-SYSTEM";
+			break;
+		default:
+			sprintf(err,"ERROR (%c)",region);
+			return err;
+	}
+}
 //---------------------------------------------------------------------------
 //Function to show a screen with debugging info
 //------------------------------
@@ -818,6 +839,10 @@ static void ShowDebugInfo(void)
 				sprintf(TextRow, "argv[%d] == \"%s\"", i, boot_argv[i]);
 				PrintRow(-1, TextRow);
 			}
+			sprintf(TextRow, "System Update Folder == ",GetMGFolderLetter(ROMVER_data[4]);
+			PrintRow(-1, TextRow);
+			sprintf(TextRow, "System Update KELF == ",strrchr(default_OSDSYS_path,'/') + 1);
+			PrintRow(-1, TextRow);
 			sprintf(TextRow, "boot_path == \"%s\"", boot_path);
 			PrintRow(-1, TextRow);
 			sprintf(TextRow, "LaunchElfDir == \"%s\"", LaunchElfDir);
