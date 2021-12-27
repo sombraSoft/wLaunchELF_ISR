@@ -1906,6 +1906,7 @@ static void Config_Startup(void)
 //---------------------------------------------------------------------------
 static void saveNetworkSettings(char *Message)
 {
+	char mcfolder[32];
 	char firstline[50];
 	extern char ip[16];
 	extern char netmask[16];
@@ -1933,11 +1934,14 @@ static void saveNetworkSettings(char *Message)
 		in_fd = -1;
 
 	if (strncmp(path, "mc", 2)) {
+		for (int x=5;path[x] != '/';x++)//populate buffer with specified folder, to attemp creation before writing
+			mcfolder[x-5] = path[x];
+		printf("-----------------[%s]\n",mcfolder);
 		mcSync(0, NULL, NULL);
 		mcMkDir(0, 0, "SYS-CONF");
 		mcSync(0, NULL, &ret);
 	}
-
+	
 	if (in_fd >= 0) {
 
 		size = genLseek(in_fd, 0, SEEK_END);
