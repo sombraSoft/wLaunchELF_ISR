@@ -841,9 +841,7 @@ static void ShowDebugInfo(void)
 				sprintf(TextRow, "argv[%d] == \"%s\"", i, boot_argv[i]);
 				PrintRow(-1, TextRow);
 			}
-			sprintf(TextRow, "System Update Folder == %s",GetMGFolderLetter(ROMVER_data[4]));
-			PrintRow(-1, TextRow);
-			sprintf(TextRow, "System Update KELF == %s",strrchr(default_OSDSYS_path,'/') + 1);
+			sprintf(TextRow, "System Update KELF == \"%s\"",default_OSDSYS_path2);
 			PrintRow(-1, TextRow);
 			sprintf(TextRow, "boot_path == \"%s\"", boot_path);
 			PrintRow(-1, TextRow);
