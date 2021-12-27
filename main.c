@@ -846,7 +846,7 @@ static void ShowDebugInfo(void)
 			PrintRow(-1, TextRow);
 			if (ROMVersion > 0x130)
 			{
-				sprintf(TextRow, "Specific System Update KELF == \"B%cEXEC-SYSTEM/osd%03x.elf\"", rough_region, (ROMVersion+0x10)&~0x0F);
+				sprintf(TextRow, "Specific System Update KELF == \"B%cEXEC-SYSTEM/osd%03x.elf\"", rough_region, (ROMVersion)&~0x0F);
 				PrintRow(-1, TextRow);
 			}
 			sprintf(TextRow, "boot_path == \"%s\"", boot_path);
@@ -2148,7 +2148,7 @@ static void InitializeBootExecPath()
 
 	sprintf( default_OSDSYS_path, "mc:/B%cEXEC-SYSTEM/%s", rough_region, file);
 	if ( ROMVersion  >= 0x230 )
-		sprintf(default_OSDSYS_path2, "Incompatible Unit (0x%03x)", (ROMVersion+0x10)&~0x0F);
+		sprintf(default_OSDSYS_path2, "Incompatible Unit (0x%03x)", (ROMVersion)&~0x0F);
 	else
 		sprintf(default_OSDSYS_path2, "mc:/B%cEXEC-SYSTEM/%s", rough_region, file);
 
