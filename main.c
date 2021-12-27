@@ -760,8 +760,8 @@ static void load_smbman(void)
 #include "SMB_test.c"
 #endif
 char* GetMGFolderLetter(char region){
-	char err[10] = "ERROR (R)"
-	switch(region){
+	char err[10] = "ERROR (R)";
+	switch (region) {
 		case 'C':
 			return "BCEXEC-SYSTEM";
 			break;
