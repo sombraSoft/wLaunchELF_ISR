@@ -1912,7 +1912,7 @@ static void saveNetworkSettings(char *Message)
 	extern char netmask[16];
 	extern char gw[16];
 	int out_fd, in_fd;
-	int ret = 0, i = 0, port;
+	int ret = 0, i = 0, port, x;
 	int size, sizeleft = 0;
 	char *ipconfigfile = 0;
 	char path[MAX_PATH];
