@@ -841,7 +841,7 @@ static void ShowDebugInfo(void)
 				sprintf(TextRow, "argv[%d] == \"%s\"", i, boot_argv[i]);
 				PrintRow(-1, TextRow);
 			}
-			sprintf(TextRow, "System Update KELF == \"%s\"",default_OSDSYS_path2);
+			sprintf(TextRow, "System Update KELF == \"%s\"",strchr(default_OSDSYS_path2,'/')+ 1);
 			PrintRow(-1, TextRow);
 			sprintf(TextRow, "boot_path == \"%s\"", boot_path);
 			PrintRow(-1, TextRow);
