@@ -844,7 +844,7 @@ static void ShowDebugInfo(void)
 			}
 			sprintf(TextRow,     "Main System Update KELF     == \"%s\"",strchr(default_OSDSYS_path2,'/')+ 1);
 			PrintRow(-1, TextRow);
-			if ((0x230 < ROMVersion) && (ROMVersion > 0x130))
+			if ((ROMVersion < 0x230) && (ROMVersion > 0x130))
 			{
 				sprintf(TextRow, "Specific System Update KELF == \"B%cEXEC-SYSTEM/osd%03x.elf\"", rough_region, (ROMVersion)&~0x0F);
 				PrintRow(-1, TextRow);
