@@ -152,6 +152,8 @@ char SystemCnf_VMODE[10];  //Arbitrary, same deal. As yet unused
 
 char default_ESR_path[] = "mc:/BOOT/ESR.ELF";
 char default_OSDSYS_path[30];
+char default_OSDSYS_path2[30];
+static unsigned short int ROMVersion;
 
 char ROMVER_data[16];  //16 byte file read from rom0:ROMVER at init
 char rough_region;     //E==Europe, A==US, I==Japan, H==Asia, C==China
@@ -759,6 +761,28 @@ static void load_smbman(void)
 //---------------------------------------------------------------------------
 #include "SMB_test.c"
 #endif
+/*
+char* GetMGFolderLetter(char region){
+	char err[10] = "ERROR (R)";
+	switch (region) {
+		case 'C':
+			return "BCEXEC-SYSTEM";
+			break;
+		case 'J':
+			return "BIEXEC-SYSTEM";
+			break;
+		case 'H':
+		case 'A':
+			return "BAEXEC-SYSTEM";
+			break;
+		case 'E':
+			return "BEEXEC-SYSTEM";
+			break;
+		default:
+			sprintf(err,"ERROR (%c)",region);
+			return err;
+	}
+}*/
 //---------------------------------------------------------------------------
 //Function to show a screen with debugging info
 //------------------------------
@@ -816,6 +840,13 @@ static void ShowDebugInfo(void)
 			PrintRow(4, TextRow);
 			for (i = 0; (i < boot_argc) && (i < 8); i++) {
 				sprintf(TextRow, "argv[%d] == \"%s\"", i, boot_argv[i]);
+				PrintRow(-1, TextRow);
+			}
+			sprintf(TextRow,     "Main System Update KELF == \"%s\"",strchr(default_OSDSYS_path2,'/')+ 1);
+			PrintRow(-1, TextRow);
+			if ((ROMVersion < 0x230) && (ROMVersion > 0x130))
+			{
+				sprintf(TextRow, "Specific System Update KELF == \"B%cEXEC-SYSTEM/osd%03x.elf\"", rough_region, (ROMVersion)&~0x0F);
 				PrintRow(-1, TextRow);
 			}
 			sprintf(TextRow, "boot_path == \"%s\"", boot_path);
@@ -2085,7 +2116,10 @@ static void InitializeBootExecPath()
 	char file[12];
 
 	uLE_InitializeRegion();
-
+	char RONVER[4 + 1];
+	strncpy(RONVER,ROMVER_data,4);
+	RONVER[4] = '\0';
+	ROMVersion = strtoul(RONVER, NULL, 16);
 	//Handle special cases, before osdmain.elf was supported.
 	switch (ROMVER_data[4]) {
 		case 'E':
@@ -2112,7 +2146,12 @@ static void InitializeBootExecPath()
 			strcpy(file, "osdmain.elf");
 	}
 
-	sprintf(default_OSDSYS_path, "mc:/B%cEXEC-SYSTEM/%s", rough_region, file);
+	sprintf( default_OSDSYS_path, "mc:/B%cEXEC-SYSTEM/%s", rough_region, file);
+	if ( ROMVersion  >= 0x230 )
+		sprintf(default_OSDSYS_path2, "/Incompatible Unit (0x%03x)", (ROMVersion)&~0x0F);
+	else
+		sprintf(default_OSDSYS_path2, "mc:/B%cEXEC-SYSTEM/%s", rough_region, file);
+
 }
 //------------------------------
 //endfunc InitializeBootExecPath
