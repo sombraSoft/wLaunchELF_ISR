@@ -842,7 +842,7 @@ static void ShowDebugInfo(void)
 				sprintf(TextRow, "argv[%d] == \"%s\"", i, boot_argv[i]);
 				PrintRow(-1, TextRow);
 			}
-			sprintf(TextRow,     "Main System Update KELF     == \"%s\"",strchr(default_OSDSYS_path2,'/')+ 1);
+			sprintf(TextRow,     "Main System Update KELF == \"%s\"",strchr(default_OSDSYS_path2,'/')+ 1);
 			PrintRow(-1, TextRow);
 			if ((ROMVersion < 0x230) && (ROMVersion > 0x130))
 			{
@@ -2148,7 +2148,7 @@ static void InitializeBootExecPath()
 
 	sprintf( default_OSDSYS_path, "mc:/B%cEXEC-SYSTEM/%s", rough_region, file);
 	if ( ROMVersion  >= 0x230 )
-		sprintf(default_OSDSYS_path2, "Incompatible Unit (0x%03x)", (ROMVersion)&~0x0F);
+		sprintf(default_OSDSYS_path2, "/Incompatible Unit (0x%03x)", (ROMVersion)&~0x0F);
 	else
 		sprintf(default_OSDSYS_path2, "mc:/B%cEXEC-SYSTEM/%s", rough_region, file);
 
