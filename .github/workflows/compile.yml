@@ -28,7 +28,7 @@ jobs:
       run: |
         make TMANIP=1 ETH=0
         mv BOOT.ELF BOOT-NO_NETWORK.ELF
-        mv BOOT-UNC.ELF BOOT-NO_NETWORK.ELF
+        mv BOOT-UNC.ELF BOOT-UNC-NO_NETWORK.ELF
         
     - name: Clean Project
       run: |
@@ -46,7 +46,7 @@ jobs:
       if: ${{ success() }}
       uses: actions/upload-artifact@v2
       with:
-        name: wLaunchELF-${{ steps.slug.outputs.sha8 }}
+        name: wLaunchELF-4.43x_isr-${{ steps.slug.outputs.sha8 }}
         path: |
               *.ELF
               
