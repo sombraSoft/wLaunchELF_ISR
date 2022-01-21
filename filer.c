@@ -2644,7 +2644,7 @@ non_PSU_RESTORE_init:
 			if (!strncmp(in, "host", 4)) {            //Handle folder copied from host: to MC
 				ret = 4;                              //request change only of main attribute for host:
 			}                                         //ends host: source clause
-#ifdef
+#endif
 		}                                             //ends non-MC source clause
 		if (mctype_PSx == 2) {                        //if copying to a PS2 MC
 			mcSetFileInfo(out[2] - '0', 0, &out[4], &file.stats, ret);
