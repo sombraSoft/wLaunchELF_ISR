@@ -1947,10 +1947,12 @@ Recurse_for_ESR:  //Recurse here for PS2Disc command with ESR disc
 		//The method below was used earlier, but causes reset with new ELF loader
 		//party[0]=0;
 		//strcpy(fullpath,"rom0:OSDSYS");
+#ifdef ETH
 	} else if (!stricmp(path, setting->Misc_PS2Net)) {
 		mainMsg[0] = 0;
 		loadNetModules();
 		return;
+#endif
 	} else if (!stricmp(path, setting->Misc_PS2PowerOff)) {
 		mainMsg[0] = 0;
 		drawMsg(LNG(Powering_Off_Console));
