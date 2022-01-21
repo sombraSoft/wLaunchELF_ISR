@@ -112,7 +112,7 @@ char cnfmode_extL[CNFMODE_CNT][4] = {
     "fnt",  // cnfmode FONT_CNF
     "*"     // cnfmode SAVE_CNF
 };
-#ifdef
+#ifdef ETH
 int host_ready = 0;
 int host_error = 0;
 int host_elflist = 0;
