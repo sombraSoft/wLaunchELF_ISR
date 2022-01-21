@@ -1270,6 +1270,7 @@ void loadHddModules(void)
 //---------------------------------------------------------------------------
 // Load Network modules by EP (modified by RA)
 //------------------------------
+#ifdef ETH
 static void loadNetModules(void)
 {
 	if (!have_NetModules) {
@@ -1288,6 +1289,7 @@ static void loadNetModules(void)
 		loadSkin(BACKGROUND_PIC, 0, 0);
 	}
 }
+#endif
 //------------------------------
 //endfunc loadNetModules
 //---------------------------------------------------------------------------
