@@ -18,13 +18,26 @@ jobs:
     - uses: actions/checkout@v2
     - run: |
         git fetch --prune --unshallow
+        
     - name: Install ps2eth
       run: |
         git clone https://github.com/ps2dev/ps2eth.git
         cd ps2eth && make clean all install
+        
+    - name: Compile wLaunchELFwithout network
+      run: |
+        make TMANIP=1 ETH=0
+        mv BOOT.ELF BOOT-NO_NETWORK.ELF
+        mv BOOT-UNC.ELF BOOT-NO_NETWORK.ELF
+        
+    - name: Clean Project
+      run: |
+        make clean
+        
     - name: Compile wLaunchELF
       run: |
-        make TMANIP=1 
+        make TMANIP=1 ETH=1
+        
     - name: Get short SHA
       id: slug
       run: echo "::set-output name=sha8::$(echo ${GITHUB_SHA} | cut -c1-8)"
@@ -36,6 +49,7 @@ jobs:
         name: wLaunchELF-${{ steps.slug.outputs.sha8 }}
         path: |
               *.ELF
+              
     - name: Create release
       if: github.ref == 'refs/heads/master'
       uses: marvinpinto/action-automatic-releases@latest
@@ -45,6 +59,7 @@ jobs:
         title: "Latest automated build"
         files: |
                *.ELF
+               
 ####################################################### 
   build-spanish:
     if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'

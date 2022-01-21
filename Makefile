@@ -31,8 +31,6 @@ ifeq ($(SMB),1)
 	EE_CFLAGS += -DSMB
 endif
 
-
-
 ifeq ($(TMANIP),1)
  EE_CFLAGS += -DTMANIP
 endif
