@@ -309,6 +309,19 @@ static void Show_About_uLE(void)
 			sprintf(TextRow, " commit: %s (based on commit 41e4ebe)", GIT_HASH);
 			PrintPos(04, hpos, TextRow);
 			PrintPos(05, hpos, "Mod created by: Matias Israelson");
+			PrintPos(-1, hpos, "Build features:"
+#ifdef SMB
+" SMB:1"
+#else
+" SMB:0"
+#endif
+
+#ifdef ETH
+" ETH:1"
+#else
+" ETH:0"
+#endif	
+);
 			PrintPos(-1, hpos, "Project maintainers:  sp193 & AKuHAK");
 			PrintPos(-1, hpos, "  ");
 			PrintPos(-1, hpos, "uLaunchELF Project maintainers:");
@@ -324,8 +337,8 @@ static void Show_About_uLE(void)
 			PrintPos(-1, hpos, "   github.com/ps2homebrew/wLaunchELF/releases");
 			PrintPos(-1, hpos, "Mod Release site:");
 			PrintPos(-1, hpos, "   github.com/israpps/wLaunchELF_ISR/releases");
-			PrintPos(-1, hpos, "Ancestral project: LaunchELF v3.41");
-			PrintPos(-1, hpos, "Created by:        Mirakichi");
+			PrintPos(-1, hpos, "Ancestral project: LaunchELF v3.41 by Mirakichi");
+			//PrintPos(-1, hpos, "Created by:        Mirakichi");
 		}  //ends if(event||post_event)
 		drawScr();// https://github.com/israpps/wLaunchELF_ISR/tree/41e43b3-mod
 		post_event = event;
