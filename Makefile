@@ -6,16 +6,19 @@ SMB = 0
 EE_BIN = BOOT-UNC.ELF
 EE_BIN_PKD = BOOT.ELF
 EE_OBJS = main.o pad.o config.o elf.o draw.o loader_elf.o filer.o \
-	poweroff_irx.o iomanx_irx.o filexio_irx.o ps2atad_irx.o ps2dev9_irx.o ps2ip_irx.o\
-	ps2smap_irx.o ps2hdd_irx.o ps2fs_irx.o ps2netfs_irx.o usbd_irx.o usbhdfsd_irx.o mcman_irx.o mcserv_irx.o\
-	cdvd_irx.o ps2ftpd_irx.o ps2host_irx.o vmc_fs_irx.o ps2kbd_irx.o\
+	poweroff_irx.o iomanx_irx.o filexio_irx.o ps2atad_irx.o ps2dev9_irx.o\
+	ps2hdd_irx.o ps2fs_irx.o usbd_irx.o usbhdfsd_irx.o mcman_irx.o mcserv_irx.o\
+	cdvd_irx.o vmc_fs_irx.o ps2kbd_irx.o\
 	hdd.o hdl_rpc.o hdl_info_irx.o editor.o timer.o jpgviewer.o icon.o lang.o\
 	font_uLE.o makeicon.o chkesr.o sior_irx.o allowdvdv_irx.o
 ifeq ($(SMB),1)
 	EE_OBJS += smbman.o
 endif
 
-
+ifeq ($(ETH),1)
+	EE_OBJS += ps2smap_irx.o ps2ftpd_irx.o ps2host_irx.o ps2netfs_irx.o ps2ip_irx.o
+	EE_CFLAGS += -DETH
+endif
 
 EE_INCS := -I$(PS2DEV)/gsKit/include -I$(PS2SDK)/ports/include -Ioldlibs/libcdvd/ee
 
@@ -27,8 +30,6 @@ EE_CFLAGS := -mgpopt -G10240 -G0
 ifeq ($(SMB),1)
 	EE_CFLAGS += -DSMB
 endif
-
-
 
 ifeq ($(TMANIP),1)
  EE_CFLAGS += -DTMANIP
@@ -99,18 +100,22 @@ filexio_irx.s: $(PS2SDK)/iop/irx/fileXio.irx
 
 ps2dev9_irx.s: $(PS2SDK)/iop/irx/ps2dev9.irx
 	bin2s $< $@ ps2dev9_irx
-
+	
+ifeq ($(ETH),1)
 ps2ip_irx.s: $(PS2SDK)/iop/irx/ps2ip.irx
 	bin2s $< $@ ps2ip_irx
 
 ps2smap_irx.s: $(PS2DEV)/ps2eth/smap/ps2smap.irx
 	bin2s $< $@ ps2smap_irx
+endif
 
 oldlibs/ps2ftpd/bin/ps2ftpd.irx: oldlibs/ps2ftpd
 	$(MAKE) -C $<
 
+ifeq ($(ETH),1)
 ps2ftpd_irx.s: oldlibs/ps2ftpd/bin/ps2ftpd.irx
 	bin2s $< $@ ps2ftpd_irx
+endif
 
 ps2atad_irx.s: $(PS2SDK)/iop/irx/ps2atad.irx
 	bin2s $< $@ ps2atad_irx
@@ -120,9 +125,11 @@ ps2hdd_irx.s: $(PS2SDK)/iop/irx/ps2hdd-osd.irx
 
 ps2fs_irx.s: $(PS2SDK)/iop/irx/ps2fs.irx
 	bin2s $< $@ ps2fs_irx
-
+	
+ifeq ($(ETH),1)
 ps2netfs_irx.s: $(PS2SDK)/iop/irx/ps2netfs.irx
 	bin2s $< $@ ps2netfs_irx
+endif
 
 hdl_info/hdl_info.irx: hdl_info
 	$(MAKE) -C $<
@@ -133,8 +140,10 @@ hdl_info_irx.s: hdl_info/hdl_info.irx
 ps2host/ps2host.irx: ps2host
 	$(MAKE) -C $<
 
+ifeq ($(ETH),1)
 ps2host_irx.s: ps2host/ps2host.irx
 	bin2s $< $@ ps2host_irx
+endif
 
 ifeq ($(SMB),1)
 smbman_irx.s: $(PS2SDK)/iop/irx/smbman.irx

@@ -13,20 +13,27 @@ extern u8 filexio_irx[];
 extern int size_filexio_irx;
 extern u8 ps2dev9_irx[];
 extern int size_ps2dev9_irx;
+
+#ifdef ETH
 extern u8 ps2ip_irx[];
 extern int size_ps2ip_irx;
 extern u8 ps2smap_irx[];
 extern int size_ps2smap_irx;
 extern u8 ps2host_irx[];
 extern int size_ps2host_irx;
+extern u8 ps2netfs_irx[];
+extern int size_ps2netfs_irx;
+extern u8 ps2ftpd_irx[];
+extern int size_ps2ftpd_irx;
+#endif
+
 #ifdef SMB
 extern u8 smbman_irx[];
 extern int size_smbman_irx;
 #endif
+
 extern u8 vmc_fs_irx[];
 extern int size_vmc_fs_irx;
-extern u8 ps2ftpd_irx[];
-extern int size_ps2ftpd_irx;
 extern u8 ps2atad_irx[];
 extern int size_ps2atad_irx;
 extern u8 ps2hdd_irx[];
@@ -37,8 +44,6 @@ extern u8 poweroff_irx[];
 extern int size_poweroff_irx;
 extern u8 loader_elf;
 extern int size_loader_elf;
-extern u8 ps2netfs_irx[];
-extern int size_ps2netfs_irx;
 extern u8 iopmod_irx[];
 extern int size_iopmod_irx;
 extern u8 usbd_irx[];
@@ -107,25 +112,27 @@ char gw[16] = "192.168.0.1";
 char netConfig[IPCONF_MAX_LEN + 64];  //Adjust size as needed
 
 //State of module collections
-static u8 have_NetModules = 0;
 static u8 have_HDD_modules = 0;
 //State of Uncheckable Modules (invalid header)
 static u8 have_cdvd = 0;
 static u8 have_usbd = 0;
 static u8 have_usb_mass = 0;
+
 static u8 have_ps2smap = 0;
 static u8 have_ps2host = 0;
+static u8 have_ps2ip = 0;
+static u8 have_NetModules = 0;
+static u8 have_ps2netfs = 0;
+
 static u8 have_ps2ftpd = 0;
 static u8 have_ps2kbd = 0;
 static u8 have_hdl_info = 0;
 //State of Checkable Modules (valid header)
 static u8 have_poweroff = 0;
 static u8 have_ps2dev9 = 0;
-static u8 have_ps2ip = 0;
 static u8 have_ps2atad = 0;
 static u8 have_ps2hdd = 0;
 static u8 have_ps2fs = 0;
-static u8 have_ps2netfs = 0;
 static u8 have_smbman = 0;
 static u8 have_vmc_fs = 0;
 //State of whether DEV9 was successfully loaded or not.
@@ -302,6 +309,19 @@ static void Show_About_uLE(void)
 			sprintf(TextRow, " commit: %s (based on commit 41e4ebe)", GIT_HASH);
 			PrintPos(04, hpos, TextRow);
 			PrintPos(05, hpos, "Mod created by: Matias Israelson");
+			PrintPos(-1, hpos, "Build features:"
+#ifdef SMB
+" SMB:1"
+#else
+" SMB:0"
+#endif
+
+#ifdef ETH
+" ETH:1"
+#else
+" ETH:0"
+#endif	
+);
 			PrintPos(-1, hpos, "Project maintainers:  sp193 & AKuHAK");
 			PrintPos(-1, hpos, "  ");
 			PrintPos(-1, hpos, "uLaunchELF Project maintainers:");
@@ -317,8 +337,8 @@ static void Show_About_uLE(void)
 			PrintPos(-1, hpos, "   github.com/ps2homebrew/wLaunchELF/releases");
 			PrintPos(-1, hpos, "Mod Release site:");
 			PrintPos(-1, hpos, "   github.com/israpps/wLaunchELF_ISR/releases");
-			PrintPos(-1, hpos, "Ancestral project: LaunchELF v3.41");
-			PrintPos(-1, hpos, "Created by:        Mirakichi");
+			PrintPos(-1, hpos, "Ancestral project: LaunchELF v3.41 by Mirakichi");
+			//PrintPos(-1, hpos, "Created by:        Mirakichi");
 		}  //ends if(event||post_event)
 		drawScr();// https://github.com/israpps/wLaunchELF_ISR/tree/41e43b3-mod
 		post_event = event;
@@ -673,6 +693,7 @@ static void load_ps2dev9(void)
 //------------------------------
 //endfunc load_ps2dev9
 //---------------------------------------------------------------------------
+#ifdef ETH
 static void load_ps2ip(void)
 {
 	int ret;
@@ -688,6 +709,7 @@ static void load_ps2ip(void)
 		have_ps2smap = 1;
 	}
 }
+#endif
 //------------------------------
 //endfunc load_ps2ip
 //---------------------------------------------------------------------------
@@ -730,6 +752,7 @@ static void load_ps2atad(void)
 //------------------------------
 //endfunc load_ps2atad
 //---------------------------------------------------------------------------
+#ifdef ETH
 void load_ps2host(void)
 {
 	int ret;
@@ -741,6 +764,7 @@ void load_ps2host(void)
 		have_ps2host = 1;
 	}
 }
+#endif
 //------------------------------
 //endfunc load_ps2host
 //---------------------------------------------------------------------------
@@ -904,6 +928,7 @@ void load_vmc_fs(void)
 //------------------------------
 //endfunc load_vmc_fs
 //---------------------------------------------------------------------------
+#ifdef ETH
 static void load_ps2ftpd(void)
 {
 	int ret;
@@ -919,9 +944,11 @@ static void load_ps2ftpd(void)
 		have_ps2ftpd = 1;
 	}
 }
+#endif
 //------------------------------
 //endfunc load_ps2ftpd
 //---------------------------------------------------------------------------
+#ifdef ETH
 static void load_ps2netfs(void)
 {
 	int ret;
@@ -932,6 +959,7 @@ static void load_ps2netfs(void)
 		have_ps2netfs = 1;
 	}
 }
+#endif
 //------------------------------
 //endfunc load_ps2netfs
 //---------------------------------------------------------------------------
@@ -1255,6 +1283,7 @@ void loadHddModules(void)
 //---------------------------------------------------------------------------
 // Load Network modules by EP (modified by RA)
 //------------------------------
+#ifdef ETH
 static void loadNetModules(void)
 {
 	if (!have_NetModules) {
@@ -1273,6 +1302,7 @@ static void loadNetModules(void)
 		loadSkin(BACKGROUND_PIC, 0, 0);
 	}
 }
+#endif
 //------------------------------
 //endfunc loadNetModules
 //---------------------------------------------------------------------------
@@ -1744,7 +1774,7 @@ Recurse_for_ESR:  //Recurse here for PS2Disc command with ESR disc
 		if (pathSep && (pathSep - path < 7) && pathSep[-1] == ':')
 			strcpy(fullpath + (pathSep - path), pathSep + 1);
 		goto ELFchecked;
-
+#ifdef ETH
 	} else if (!strncmp(path, "host:", 5)) {
 		initHOST();
 		party[0] = 0;
@@ -1755,7 +1785,7 @@ Recurse_for_ESR:  //Recurse here for PS2Disc command with ESR disc
 			strcat(fullpath, path + 5);
 		makeHostPath(fullpath, fullpath);
 		goto CheckELF_fullpath;
-
+#endif
 	} else if (!stricmp(path, setting->Misc_OSDSYS)) {
 		char arg0[20], arg1[20], arg2[20], arg3[40];
 		char *args[4] = {arg0, arg1, arg2, arg3};
@@ -1930,10 +1960,12 @@ Recurse_for_ESR:  //Recurse here for PS2Disc command with ESR disc
 		//The method below was used earlier, but causes reset with new ELF loader
 		//party[0]=0;
 		//strcpy(fullpath,"rom0:OSDSYS");
+#ifdef ETH
 	} else if (!stricmp(path, setting->Misc_PS2Net)) {
 		mainMsg[0] = 0;
 		loadNetModules();
 		return;
+#endif
 	} else if (!stricmp(path, setting->Misc_PS2PowerOff)) {
 		mainMsg[0] = 0;
 		drawMsg(LNG(Powering_Off_Console));
@@ -2236,11 +2268,11 @@ int main(int argc, char *argv[])
 			boot = BOOT_DEVICE_HDD;
 		}
 	}
-
+#ifdef ETH
 	if (!strncmp(LaunchElfDir, "host", 4)) {
 		boot = BOOT_DEVICE_HOST;
 	}
-
+#endif
 	if (((p = strrchr(LaunchElfDir, '/')) == NULL) && ((p = strrchr(LaunchElfDir, '\\')) == NULL))
 		p = strrchr(LaunchElfDir, ':');
 	if (p != NULL)
@@ -2255,12 +2287,13 @@ int main(int argc, char *argv[])
 	InitializeBootExecPath();
 
 	CNF_error = loadConfig(mainMsg, strcpy(CNF, "LAUNCHELF.CNF"));
-
+#ifdef ETH
 	if (boot == BOOT_DEVICE_HOST) {
 		//If booted from the host: device, bring up the host device at this point.
 		getIpConfig();
 		initHOST();
 	}
+#endif
 	//Last chance to look at bootup screen, so allow braking here
 	/*
 	if(readpad() && (new_pad && PAD_UP))
