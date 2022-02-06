@@ -17,7 +17,6 @@ endif
 
 ifeq ($(ETH),1)
 	EE_OBJS += ps2smap_irx.o ps2ftpd_irx.o ps2host_irx.o ps2netfs_irx.o ps2ip_irx.o
-	EE_CFLAGS += -DETH
 endif
 
 EE_INCS := -I$(PS2DEV)/gsKit/include -I$(PS2SDK)/ports/include -Ioldlibs/libcdvd/ee
@@ -29,6 +28,10 @@ EE_CFLAGS := -mgpopt -G10240 -G0
 
 ifeq ($(SMB),1)
 	EE_CFLAGS += -DSMB
+endif
+
+ifeq ($(ETH),1)
+	EE_CFLAGS += -DETH
 endif
 
 ifeq ($(TMANIP),1)
