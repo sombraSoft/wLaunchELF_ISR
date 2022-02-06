@@ -24,9 +24,9 @@ jobs:
         git clone https://github.com/ps2dev/ps2eth.git
         cd ps2eth && make clean all install
         
-    - name: Compile wLaunchELFwithout network
+    - name: Compile wLaunchELF without network
       run: |
-        make TMANIP=1 ETH=0
+        make TMANIP=1
         mv BOOT.ELF BOOT-NO_NETWORK.ELF
         mv BOOT-UNC.ELF BOOT-UNC-NO_NETWORK.ELF
         
