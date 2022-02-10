@@ -77,6 +77,7 @@ jobs:
       run: |
         git clone https://github.com/ps2dev/ps2eth.git
         cd ps2eth && make clean all install
+
     - name: Compile wLaunchELF
       run: |
         SCH=${GITHUB_SHA::7}
@@ -84,6 +85,14 @@ jobs:
         make TMANIP=1 
         mv BOOT.ELF BOOT-SPA.ELF
         mv BOOT-UNC.ELF BOOT-UNC-SPA.ELF
+
+    - name: Compile wLaunchELF without network modules
+      run: |
+        make clean
+        make TMANIP=1 ETH=0
+        mv BOOT.ELF BOOT-SPA_NO-NETWORK.ELF
+        mv BOOT-UNC.ELF BOOT-UNC-SPA_NO-NETWORK.ELF
+
     - name: Get short SHA
       id: slug
       run: echo "::set-output name=sha8::$(echo ${GITHUB_SHA} | cut -c1-8)"
@@ -95,6 +104,7 @@ jobs:
         name: wLaunchELF-spanish-${{ steps.slug.outputs.sha8 }}
         path: |
               *.ELF
+
     - name: Create release
       if: github.ref == 'refs/heads/master'
       uses: marvinpinto/action-automatic-releases@latest
