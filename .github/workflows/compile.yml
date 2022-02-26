@@ -82,7 +82,7 @@ jobs:
       run: |
         SCH=${GITHUB_SHA::7}
         echo "#include \"Lang/SPA.LNG\"">lang.h
-        make TMANIP=1 
+        make TMANIP=1 ETH=1
         mv BOOT.ELF BOOT-SPA.ELF
         mv BOOT-UNC.ELF BOOT-UNC-SPA.ELF
 
