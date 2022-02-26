@@ -314,6 +314,7 @@ static void Show_About_uLE(void)
 			sprintf(TextRow, " commit: %s (based on commit 41e4ebe)", GIT_HASH);
 			PrintPos(04, hpos, TextRow);
 			PrintPos(05, hpos, "Mod created by: Matias Israelson");
+			PrintPos(-1, hpos, "DS3/DS4 support by Alex Parrado");
 			PrintPos(-1, hpos, "Build features:"
 #ifdef SMB
 " SMB:1"
