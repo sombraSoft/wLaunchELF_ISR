@@ -8,8 +8,8 @@ It features:
 
 - Timestamp manipulation feature to fix the date of any memory card folder containing any icon-based exploit _(\*tuna)_
 - Extra file extensions for Text Editor ShortCuts
-- `101kb` smaller that it´s original counterpart (wLE 41e4ebe) (this was possible thanks to CI with ps2dev:v1.0 toolchain)
-
+- ~`100kb` smaller that it´s original counterpart (wLE 41e4ebe) (this was possible thanks to CI with ps2dev:v1.0 toolchain)
+- Support for PS3/PS4 Dualshocks
 #### this mod has proven to be excellent for HDD, USB and MC management.
 
 > this mod is already bundled on any mod/project/repack made by me (and it´s auto-updated if that project is hosted here on github)
