@@ -2086,12 +2086,14 @@ Recurse_for_ESR:  //Recurse here for PS2Disc command with ESR disc
 // dlanor: but changed now, as the original was badly bugged
 static void Reset()
 {
+#ifndef NO_IOP_RESET
 	SifInitRpc(0);
 	while (!SifIopReset("", 0)) {
 	};
 	while (!SifIopSync()) {
 	};
 	SifInitRpc(0);
+#endif
 	SifLoadFileInit();
 	initsbv_patches();
 
