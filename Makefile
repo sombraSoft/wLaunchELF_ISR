@@ -30,6 +30,10 @@ ifeq ($(SMB),1)
 	EE_CFLAGS += -DSMB
 endif
 
+ifeq ($(IOP_RESET),0)
+	EE_CFLAGS += -DNO_IOP_RESET
+endif
+
 ifeq ($(ETH),1)
 	EE_CFLAGS += -DETH
 endif
