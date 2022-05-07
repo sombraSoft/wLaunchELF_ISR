@@ -37,7 +37,7 @@ jobs:
         
     - name: "Compile wLaunchELF - NO IOP-RESET"
       run: |
-        make TMANIP=1 ETH=1 IOP_RESET=0
+        make TMANIP=1 ETH=0 IOP_RESET=0
         mv BOOT.ELF BOOT-NO_IOP_RESET.ELF
         
     - name: Clean Project
