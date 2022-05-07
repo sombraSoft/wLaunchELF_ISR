@@ -35,6 +35,15 @@ jobs:
       run: |
         make clean
         
+    - name: "Compile wLaunchELF - NO IOP-RESET"
+      run: |
+        make TMANIP=1 ETH=1 IOP_RESET=0
+        mv BOOT.ELF BOOT-NO_IOP_RESET.ELF
+        
+    - name: Clean Project
+      run: |
+        make clean
+        
     - name: Compile wLaunchELF
       run: |
         make TMANIP=1 ETH=1
@@ -73,7 +82,9 @@ jobs:
         apk add build-base git zip
     - uses: actions/checkout@v2
     - run: |
+        git config --global --add safe.directory "$GITHUB_WORKSPACE"
         git fetch --prune --unshallow
+        
     - name: Install ps2eth
       run: |
         git clone https://github.com/ps2dev/ps2eth.git
