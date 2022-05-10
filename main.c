@@ -327,6 +327,12 @@ static void Show_About_uLE(void)
 #else
 " ETH:0"
 #endif	
+
+#ifdef NO_IOP_RESET
+" IOP_RESET=0"
+#else
+" IOP_RESET=1"
+#endif
 );
 			PrintPos(-1, hpos, "Project maintainers:  sp193 & AKuHAK");
 			PrintPos(-1, hpos, "  ");
