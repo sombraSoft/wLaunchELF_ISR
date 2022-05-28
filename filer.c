@@ -1414,7 +1414,7 @@ int menu(const char *path, FILEINFO *file)
 		enable[TIMEMANIP] = FALSE;
 	} 
 //#endif //TMANIP
-	if ( (genCmpFileExt(file->name, "ELF")) && ( (!strncmp(path, "mass:",5)) || (!strncmp(path, "hdd0:/",6) && !menu_disabled) ) )
+	if ( (genCmpFileExt(file->name, "ELF")) && ( (!strncmp(path, "mass", 4)) || (!strncmp(path, "hdd0:/", 6) && !menu_disabled) ) )
 	{
 		enable[TITLE_CFG] = TRUE;
 	} else {enable[TITLE_CFG] = FALSE;}
