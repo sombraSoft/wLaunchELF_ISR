@@ -30,6 +30,10 @@ ifeq ($(SMB),1)
 	EE_CFLAGS += -DSMB
 endif
 
+ifeq ($(SIO_DEBUG),1)
+	EE_CFLAGS += -DSIO_DEBUG
+endif
+
 ifeq ($(IOP_RESET),0)
 	EE_CFLAGS += -DNO_IOP_RESET
 endif
