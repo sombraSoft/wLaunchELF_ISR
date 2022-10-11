@@ -10,7 +10,7 @@ EE_OBJS = main.o pad.o config.o elf.o draw.o loader_elf.o filer.o \
 	ps2hdd_irx.o ps2fs_irx.o usbd_irx.o usbhdfsd_irx.o mcman_irx.o mcserv_irx.o\
 	cdvd_irx.o vmc_fs_irx.o ps2kbd_irx.o\
 	hdd.o hdl_rpc.o hdl_info_irx.o editor.o timer.o jpgviewer.o icon.o lang.o\
-	font_uLE.o makeicon.o chkesr.o sior_irx.o allowdvdv_irx.o ds34usb.o libds34usb.a ds34bt.o libds34bt.a
+	font_uLE.o makeicon.o chkesr.o allowdvdv_irx.o ds34usb.o libds34usb.a ds34bt.o libds34bt.a
 ifeq ($(SMB),1)
 	EE_OBJS += smbman.o
 endif
@@ -32,6 +32,7 @@ endif
 
 ifeq ($(SIO_DEBUG),1)
 	EE_CFLAGS += -DSIO_DEBUG
+	EE_OBJS += sior_irx.o
 endif
 
 ifeq ($(IOP_RESET),0)

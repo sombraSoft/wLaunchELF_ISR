@@ -60,8 +60,10 @@ extern u8 mcman_irx[];
 extern int size_mcman_irx;
 extern u8 mcserv_irx[];
 extern int size_mcserv_irx;
+#ifdef SIO_DEBUG
 extern u8 sior_irx[];
 extern int size_sior_irx;
+#endif
 extern u8 allowdvdv_irx[];
 extern int size_allowdvdv_irx;
 extern u8 ds34usb_irx[];
@@ -995,7 +997,7 @@ static void loadBasicModules(void)
 	SIOR_Init(0x20);
 
 	id = SifExecModuleBuffer(sior_irx, size_sior_irx, 0, NULL, &ret);
-	scr_printf("\t sior id=%d _start ret=%d\n", id, ret);
+	printf("\t sior id=%d _start ret=%d\n", id, ret);
 	DPRINTF("sior id=%d _start ret=%d\n", id, ret);
 #endif
 
