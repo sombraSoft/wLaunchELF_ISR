@@ -44,6 +44,17 @@ jobs:
       run: |
         make clean
         
+    - name: Compile wLaunchELF with EE-SIO
+      run: |
+        make TMANIP=1 ETH=1 SIO_DEBUG=1
+        mv BOOT.ELF BOOT-EE_SIO.ELF
+        make clean all TMANIP=1 ETH=0 SIO_DEBUG=1
+        mv BOOT.ELF BOOT-NO_NETWORK-EE_SIO.ELF
+        
+    - name: Clean Project
+      run: |
+        make clean
+
     - name: Compile wLaunchELF
       run: |
         make TMANIP=1 ETH=1

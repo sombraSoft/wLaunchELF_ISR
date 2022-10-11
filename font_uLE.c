@@ -645,7 +645,7 @@ unsigned char font_uLE[] = {
     //The C parser is also greedy; it will always grab as many digits as possible.
     //So if you have a number after the sequence that should not be considered part of the
     //sequence, break up the numbers by ending the string after the sequence:
-    //       printf("\xFF01234\n"); should be written printf("\xFF0""1234\n");
+    //       ("\xFF01234\n"); should be written ("\xFF0""1234\n");
 };  //ends font_uLE
 //---------------------------------------------------------------------------
 //End of file:  font_uLE.c
