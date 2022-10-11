@@ -7,69 +7,50 @@
 #include "ps2smb.h"
 #endif
 
-extern u8 iomanx_irx[];
+#define IMPORT_BIN2C(_n) \
+    extern u8 _n[];   \
+    extern int size_##_n
+
+IMPORT_BIN2C(iomanx_irx[];
 extern int size_iomanx_irx;
-extern u8 filexio_irx[];
+IMPORT_BIN2C(filexio_irx[];
 extern int size_filexio_irx;
-extern u8 ps2dev9_irx[];
+IMPORT_BIN2C(ps2dev9_irx[];
 extern int size_ps2dev9_irx;
 
 #ifdef ETH
-extern u8 ps2ip_irx[];
-extern int size_ps2ip_irx;
-extern u8 ps2smap_irx[];
-extern int size_ps2smap_irx;
-extern u8 ps2host_irx[];
-extern int size_ps2host_irx;
-extern u8 ps2netfs_irx[];
-extern int size_ps2netfs_irx;
-extern u8 ps2ftpd_irx[];
-extern int size_ps2ftpd_irx;
+IMPORT_BIN2C(ps2ip_irx);
+IMPORT_BIN2C(ps2smap_irx);
+IMPORT_BIN2C(ps2host_irx);
+IMPORT_BIN2C(ps2netfs_irx);
+IMPORT_BIN2C(ps2ftpd_irx);
 #endif
 
 #ifdef SMB
-extern u8 smbman_irx[];
-extern int size_smbman_irx;
+IMPORT_BIN2C(smbman_irx);
 #endif
 
-extern u8 vmc_fs_irx[];
-extern int size_vmc_fs_irx;
-extern u8 ps2atad_irx[];
-extern int size_ps2atad_irx;
-extern u8 ps2hdd_irx[];
-extern int size_ps2hdd_irx;
-extern u8 ps2fs_irx[];
-extern int size_ps2fs_irx;
-extern u8 poweroff_irx[];
-extern int size_poweroff_irx;
-extern u8 loader_elf;
-extern int size_loader_elf;
-extern u8 iopmod_irx[];
-extern int size_iopmod_irx;
-extern u8 usbd_irx[];
-extern int size_usbd_irx;
-extern u8 usb_mass_irx[];
-extern int size_usb_mass_irx;
-extern u8 cdvd_irx[];
-extern int size_cdvd_irx;
-extern u8 ps2kbd_irx[];
-extern int size_ps2kbd_irx;
-extern u8 hdl_info_irx[];
-extern int size_hdl_info_irx;
-extern u8 mcman_irx[];
-extern int size_mcman_irx;
-extern u8 mcserv_irx[];
-extern int size_mcserv_irx;
 #ifdef SIO_DEBUG
-extern u8 sior_irx[];
-extern int size_sior_irx;
+IMPORT_BIN2C(sior_irx);
 #endif
-extern u8 allowdvdv_irx[];
-extern int size_allowdvdv_irx;
-extern u8 ds34usb_irx[];
-extern int size_ds34usb_irx;
-extern u8 ds34bt_irx[];
-extern int size_ds34bt_irx;
+
+IMPORT_BIN2C(vmc_fs_irx);
+IMPORT_BIN2C(ps2atad_irx);
+IMPORT_BIN2C(ps2hdd_irx);
+IMPORT_BIN2C(ps2fs_irx);
+IMPORT_BIN2C(poweroff_irx);
+IMPORT_BIN2C(loader_elf);
+IMPORT_BIN2C(iopmod_irx);
+IMPORT_BIN2C(usbd_irx);
+IMPORT_BIN2C(usb_mass_irx);
+IMPORT_BIN2C(cdvd_irx);
+IMPORT_BIN2C(ps2kbd_irx);
+IMPORT_BIN2C(hdl_info_irx);
+IMPORT_BIN2C(mcman_irx);
+IMPORT_BIN2C(mcserv_irx);
+IMPORT_BIN2C(allowdvdv_irx);
+IMPORT_BIN2C(ds34usb_irx);
+IMPORT_BIN2C(ds34bt_irx);
 
 //#define DEBUG
 #ifdef DEBUG
