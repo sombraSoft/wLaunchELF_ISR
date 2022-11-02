@@ -11,12 +11,9 @@
     extern u8 _n[];   \
     extern int size_##_n
 
-IMPORT_BIN2C(iomanx_irx[];
-extern int size_iomanx_irx;
-IMPORT_BIN2C(filexio_irx[];
-extern int size_filexio_irx;
-IMPORT_BIN2C(ps2dev9_irx[];
-extern int size_ps2dev9_irx;
+IMPORT_BIN2C(iomanx_irx);
+IMPORT_BIN2C(filexio_irx);
+IMPORT_BIN2C(ps2dev9_irx);
 
 #ifdef ETH
 IMPORT_BIN2C(ps2ip_irx);
