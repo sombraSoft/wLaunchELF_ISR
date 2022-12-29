@@ -31,6 +31,14 @@ IMPORT_BIN2C(smbman_irx);
 IMPORT_BIN2C(sior_irx);
 #endif
 
+IMPORT_BIN2C(usbd_irx);
+#ifdef EXFAT
+IMPORT_BIN2C(bdm_irx);
+IMPORT_BIN2C(bdmfs_fatfs_irx);
+IMPORT_BIN2C(usbmass_bd_irx);
+#else
+IMPORT_BIN2C(usb_mass_irx);
+#endif
 IMPORT_BIN2C(vmc_fs_irx);
 IMPORT_BIN2C(ps2atad_irx);
 IMPORT_BIN2C(ps2hdd_irx);
@@ -38,8 +46,6 @@ IMPORT_BIN2C(ps2fs_irx);
 IMPORT_BIN2C(poweroff_irx);
 IMPORT_BIN2C(loader_elf);
 IMPORT_BIN2C(iopmod_irx);
-IMPORT_BIN2C(usbd_irx);
-IMPORT_BIN2C(usb_mass_irx);
 IMPORT_BIN2C(cdvd_irx);
 IMPORT_BIN2C(ps2kbd_irx);
 IMPORT_BIN2C(hdl_info_irx);
@@ -1186,7 +1192,31 @@ static void loadDs34Modules(void)
                 have_ds34 = 1;
     }
 }
+
 static void loadUsbModules(void)
+#ifdef EXFAT
+{
+    int ret;
+
+    loadUsbDModule();
+    if (have_usbd && !have_usb_mass && (USB_mass_loaded = loadExternalModule(setting->usbmass_file, NULL, 0))) {
+        delay(3);
+        have_usb_mass = 1;
+    } else if (have_usbd && !have_usb_mass) {
+        SifExecModuleBuffer(bdm_irx, size_bdm_irx, 0, NULL, &ret);
+        SifExecModuleBuffer(bdmfs_fatfs_irx, size_bdmfs_fatfs_irx, 0, NULL, &ret);
+        SifExecModuleBuffer(usbmass_bd_irx, size_usbmass_bd_irx, 0, NULL, &ret);
+        delay(3);
+        USB_mass_loaded = 1;
+        have_usb_mass = 1;
+    }
+    if (USB_mass_loaded == 1)                       // if using the internal mass driver
+        USB_mass_max_drives = USB_MASS_MAX_DRIVES;  // allow multiple drives
+    else
+        USB_mass_max_drives = 1;  // else allow only one mass drive
+	loadDs34Modules();
+}
+#else
 {
 	loadUsbDModule();
 	if (have_usbd && !have_usb_mass && (USB_mass_loaded = loadExternalModule(setting->usbmass_file, &usb_mass_irx, size_usb_mass_irx))) {
@@ -1200,6 +1230,7 @@ static void loadUsbModules(void)
 		
 	loadDs34Modules();
 }
+#endif
 //------------------------------
 //endfunc loadUsbModules
 //---------------------------------------------------------------------------
