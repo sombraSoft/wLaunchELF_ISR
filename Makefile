@@ -1,32 +1,24 @@
 #.SILENT:
 
-SMB ?= 0
-DVRP ?= 0
+# ---{ BUILD CONFIGURATION }--- #
 SIO_DEBUG ?= 0
+SMB ?= 0
+TMANIP ?= 1
 ETH ?= 1
-IOP_RESET ?= 1
 EXFAT ?= 0
+DVRP ?= 0
+IOP_RESET ?= 1
+# ----------------------------- #
 
-EE_BIN = BOOT-UNC.ELF
-EE_BIN_PKD = BOOT.ELF
+BIN_NAME = BOOT$(HAS_ETH)$(HAS_IOP_RESET)$(HAS_SMB)$(HAS_DVRP)$(HAS_EXFAT)$(HAS_EESIO)
+EE_BIN = $(BIN_NAME)-UNC.ELF
+EE_BIN_PKD = $(BIN_NAME).ELF
 EE_OBJS = main.o pad.o config.o elf.o draw.o loader_elf.o filer.o \
 	poweroff_irx.o iomanx_irx.o filexio_irx.o ps2atad_irx.o ps2dev9_irx.o\
 	ps2hdd_irx.o ps2fs_irx.o usbd_irx.o mcman_irx.o mcserv_irx.o\
 	cdvd_irx.o vmc_fs_irx.o ps2kbd_irx.o\
 	hdd.o hdl_rpc.o hdl_info_irx.o editor.o timer.o jpgviewer.o icon.o lang.o\
 	font_uLE.o makeicon.o chkesr.o allowdvdv_irx.o ds34usb.o libds34usb.a ds34bt.o libds34bt.a
-ifeq ($(SMB),1)
-    EE_OBJS += smbman.o
-endif
-
-ifeq ($(ETH),1)
-    EE_OBJS += ps2smap_irx.o ps2ftpd_irx.o ps2host_irx.o ps2netfs_irx.o ps2ip_irx.o
-endif
-
-ifeq ($(DVRP),1)
-    EE_OBJS += dvrdrv_irx.o dvrfile_irx.o
-    EE_CFLAGS += -DDVRP
-endif
 
 EE_INCS := -I$(PS2DEV)/gsKit/include -I$(PS2SDK)/ports/include -Ioldlibs/libcdvd/ee
 
@@ -36,39 +28,49 @@ EE_LIBS = -lgskit -ldmakit -ljpeg -lpad -lmc -lhdd -lcdvdfs -lkbd -lmf \
 EE_CFLAGS := -mgpopt -G10240 -G0 -DNEWLIB_PORT_AWARE -D_EE
 
 ifeq ($(SMB),1)
+    EE_OBJS += smbman.o
+    HAS_SMB = -SMB
     EE_CFLAGS += -DSMB
 endif
 
 ifeq ($(DVRP),1)
+    EE_OBJS += dvrdrv_irx.o dvrfile_irx.o
     EE_CFLAGS += -DDVRP
+    HAS_DVRP = -DVRP
 endif
 
 ifeq ($(SIO_DEBUG),1)
     EE_CFLAGS += -DSIO_DEBUG
     EE_OBJS += sior_irx.o
+    HAS_EESIO = -SIO_DEBUG
 endif
 
 ifeq ($(IOP_RESET),0)
-     EE_CFLAGS += -DNO_IOP_RESET
+    EE_CFLAGS += -DNO_IOP_RESET
+    HAS_IOP_RESET = -NO_IOP_RESET
 endif
 
 ifeq ($(ETH),1)
+    EE_OBJS += ps2smap_irx.o ps2ftpd_irx.o ps2host_irx.o ps2netfs_irx.o ps2ip_irx.o
     EE_CFLAGS += -DETH
+else
+    HAS_ETH = -NO_NETWORK
 endif
 
 ifeq ($(TMANIP),1)
- EE_CFLAGS += -DTMANIP
+    EE_CFLAGS += -DTMANIP
 endif
 
 ifeq ($(TMANIP),2)
- EE_CFLAGS += -DTMANIP
- EE_CFLAGS += -DTMANIP_MORON
+    EE_CFLAGS += -DTMANIP
+    EE_CFLAGS += -DTMANIP_MORON
 endif
 
 
 ifeq ($(EXFAT),1)
     EE_OBJS += bdm_irx.o bdmfs_fatfs_irx.o usbmass_bd_irx.o
     EE_CFLAGS += -DEXFAT
+    HAS_EXFAT = -EXFAT
 else
     EE_OBJS += usbhdfsd_irx.o
 endif
