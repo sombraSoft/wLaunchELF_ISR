@@ -11,7 +11,7 @@ IOP_RESET ?= 1
 # ----------------------------- #
 
 BIN_NAME = BOOT$(HAS_ETH)$(HAS_IOP_RESET)$(HAS_SMB)$(HAS_DVRP)$(HAS_EXFAT)$(HAS_EESIO)
-EE_BIN = $(BIN_NAME)-UNC.ELF
+EE_BIN = UNC-$(BIN_NAME).ELF
 EE_BIN_PKD = $(BIN_NAME).ELF
 EE_OBJS = main.o pad.o config.o elf.o draw.o loader_elf.o filer.o \
 	poweroff_irx.o iomanx_irx.o filexio_irx.o ps2atad_irx.o ps2dev9_irx.o\
