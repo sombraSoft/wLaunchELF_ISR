@@ -27,7 +27,7 @@ It features:
 - `EE_SIO`: supports printing debug information via the EmotionEngine serial port (useless for users)
 - `NO_NETWORK`: network features are disabled and network IRX drivers stripped away, with the purpose of making a smaller wLaunchELF for users who don't use network
 - `NO_IOP_RESET`: build of wLaunchELF wich does not reset the I/O CPU upon startup, __DON'T USE IF YOU DON'T KNOW WHAT IT MEANS__
-
+- `EXFAT`: support for accessing EXFAT filesystems from USB devices
 
 # **original readme**
 wLaunchELF, formerly known as uLaunchELF, also known as wLE or uLE (abbreviated), is an open source file manager and executable launcher for the Playstation 2 console based off of the original LaunchELF. It contains many different features, including a text editor, hard drive manager, as well as network support, and much more.
