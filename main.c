@@ -55,6 +55,11 @@ IMPORT_BIN2C(allowdvdv_irx);
 IMPORT_BIN2C(ds34usb_irx);
 IMPORT_BIN2C(ds34bt_irx);
 
+#ifdef DVRP
+IMPORT_BIN2C(dvrdrv_irx);
+IMPORT_BIN2C(dvrfile_irx);
+#endif
+
 //#define DEBUG
 #ifdef DEBUG
 #define dbgprintf(args...) scr_printf(args)
@@ -128,6 +133,12 @@ static u8 have_smbman = 0;
 static u8 have_vmc_fs = 0;
 //State of whether DEV9 was successfully loaded or not.
 static u8 ps2dev9_loaded = 0;
+
+#ifdef DVRP
+static u8 have_DVRP_HDD_modules = 0;
+static u8 have_dvrdrv = 0;
+static u8 have_dvrfile = 0;
+#endif
 //State of whether the UI has been initialized.
 //Use this to determine whether code that loads a device's driver(s) can print onto the screen.
 static u8 is_early_init = 1;
@@ -377,7 +388,14 @@ static void Show_build_info(void)
 #else
 " IOP_RESET=1"
 #endif
+
+#ifdef DVRP
+" DVRP_HDD=1"
+#else
+" DVRP_HDD=0"
+#endif
 );
+
 			PrintPos(-1, hpos, 
 #ifdef EXFAT
 " EXFAT=0"
@@ -385,7 +403,6 @@ static void Show_build_info(void)
 " EXFAT=1"
 #endif
 );
-
 			PrintPos(-1, hpos, "Mod Release site:");
 			PrintPos(-1, hpos, "   github.com/israpps/wLaunchELF_ISR/releases");
 
@@ -836,28 +853,30 @@ static void load_smbman(void)
 //---------------------------------------------------------------------------
 #include "SMB_test.c"
 #endif
-/*
-char* GetMGFolderLetter(char region){
-	char err[10] = "ERROR (R)";
-	switch (region) {
-		case 'C':
-			return "BCEXEC-SYSTEM";
-			break;
-		case 'J':
-			return "BIEXEC-SYSTEM";
-			break;
-		case 'H':
-		case 'A':
-			return "BAEXEC-SYSTEM";
-			break;
-		case 'E':
-			return "BEEXEC-SYSTEM";
-			break;
-		default:
-			sprintf(err,"ERROR (%c)",region);
-			return err;
+#ifdef DVRP
+static void load_ps2dvr(void)
+{
+	int ret;
+
+	load_ps2atad();
+	if (!is_early_init)  //Do not draw any text before the UI is initialized.
+		drawMsg("Loading dvrdrv");
+	if (!have_dvrdrv) {
+		SifExecModuleBuffer(dvrdrv_irx, size_dvrdrv_irx, 0, NULL, &ret);
+		have_dvrdrv = 1;
 	}
-}*/
+	if (!is_early_init)  //Do not draw any text before the UI is initialized.
+		drawMsg("Loading dvrfile");
+	if (!have_dvrfile) {
+		SifExecModuleBuffer(dvrfile_irx, size_dvrfile_irx, 0, NULL, &ret);
+		have_dvrfile = 1;
+	}
+}
+//------------------------------
+//endfunc load_ps2dvr
+//---------------------------------------------------------------------------
+#endif
+
 //---------------------------------------------------------------------------
 //Function to show a screen with debugging info
 //------------------------------
@@ -1138,7 +1157,20 @@ static void getExternalFilePath(const char *argPath, char *filePath)
 		sprintf(filePath, "pfs0:%s", p);
 		*p = 0;
 		mountParty(party);
+#ifdef DVRP
+	} else if (!strncmp(argPath, "dvr_hdd0:/", 10)) {
+		//Loading some module from HDD
+		char party[MAX_PATH];
+		char *p;
 
+		loadDVRPHddModules();
+		sprintf(party, "dvr_hdd0:%s", argPath + 10);
+		p = strchr(party, '/');
+		sprintf(filePath, "dvr_pfs0:%s", p);
+		*p = 0;
+		mountDVRPParty(party);
+
+#endif
 	} else if (!strncmp(argPath, "cdfs", 4)) {
 		strcpy(filePath, argPath);
 		CDVD_FlushCache();
@@ -1315,6 +1347,9 @@ static void closeAllAndPoweroff(void)
 	if (ps2dev9_loaded) {
 		/* Close all files */
 		fileXioDevctl("pfs:", PDIOC_CLOSEALL, NULL, 0, NULL, 0);
+#ifdef DVRP
+		fileXioDevctl("dvr_pfs:", PDIOC_CLOSEALL, NULL, 0, NULL, 0);
+#endif
 		/* Switch off DEV9 */
 		while (fileXioDevctl("dev9x:", DDIOC_OFF, NULL, 0, NULL, 0) < 0) {
 		};
@@ -1367,6 +1402,24 @@ void loadHddModules(void)
 //------------------------------
 //endfunc loadHddModules
 //---------------------------------------------------------------------------
+#ifdef DVRP
+void loadDVRPHddModules(void)
+{
+	if (!have_DVRP_HDD_modules) {
+		if (!is_early_init)  //Do not draw any text before the UI is initialized.
+			drawMsg(LNG(Loading_HDD_Modules));
+		setupPowerOff();
+		load_ps2dvr();
+		//sceCdNoticeGameStart(0, NULL); //shouldn't this be done by the bootloader?
+		have_DVRP_HDD_modules = TRUE;
+	}
+}
+//------------------------------
+//endfunc loadDVRPHddModules
+//---------------------------------------------------------------------------
+#endif
+
+
 // Load Network modules by EP (modified by RA)
 //------------------------------
 #ifdef ETH
@@ -1855,7 +1908,18 @@ Recurse_for_ESR:  //Recurse here for PS2Disc command with ESR disc
 		sprintf(fullpath, "pfs0:%s", p);
 		*p = 0;
 		goto ELFchecked;
-
+#ifdef DVRP
+	} else if (!strncmp(path, "dvr_hdd0:/", 10)) {
+		loadDVRPHddModules();
+		if ((t = checkELFheader(path)) <= 0)
+			goto ELFnotFound;
+		//coming here means the ELF is fine
+		sprintf(party, "dvr_hdd0:%s", path + 10);
+		p = strchr(party, '/');
+		sprintf(fullpath, "dvr_pfs0:%s", p);
+		*p = 0;
+		goto ELFchecked;
+#endif
 	} else if (!strncmp(path, "mass", 4)) {
 		if ((t = checkELFheader(path)) <= 0)
 			goto ELFnotFound;
@@ -2367,6 +2431,31 @@ int main(int argc, char *argv[])
 			}
 
 			boot = BOOT_DEVICE_HDD;
+#ifdef DVRP
+		} else if (!strncmp(argv[0], "dvr_hdd", 7)) {
+			//Booting from the HDD requires special handling for HDD-based paths.
+			char temp[MAX_PATH];
+			char *t, *p;
+			/* Change boot_path to contain a path to the block device.
+                Standard HDD path format: dvr_hdd0:partition:pfs:path/to/file
+                However, (older) homebrew may not use this format. */
+			strcpy(temp, boot_path + 9);  //Skip "dvr_hdd0:" when copying.
+			t = strchr(temp, ':');        //Check if the separator between the block device & the path exists.
+			if (t != NULL) {
+				*(t) = 0;                //If it does, get the block device name.
+				p = strchr(t + 1, ':');  //Get the path to the file
+				if (p != NULL) {
+					if (p[1] == '/')
+						sprintf(LaunchElfDir, "dvr_hdd0:/%s", temp);
+					else
+						sprintf(LaunchElfDir, "dvr_hdd0:/%s/", temp);
+
+					strcat(LaunchElfDir, p + 1);
+				}
+			}
+
+			boot = BOOT_DEVICE_HDD;
+#endif
 		}
 	}
 #ifdef ETH

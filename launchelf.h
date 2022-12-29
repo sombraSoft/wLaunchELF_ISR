@@ -1,7 +1,11 @@
 #ifndef LAUNCHELF_H
 #define LAUNCHELF_H
 #define HACK_FOLDER "BXEXEC-OPENTUNA"
+#ifndef DVRP
 #define ULE_VERSION "v4.43x_isr"
+#else
+#define ULE_VERSION "v4.43x_isr_dvr"
+#endif
 //#ifndef ULE_VERDATE
 //#define ULE_VERDATE __DATE__
 //#endif
@@ -356,6 +360,10 @@ int genRmdir(char *path);
 int genCmpFileExt(const char *filename, const char *extension);
 int mountParty(const char *party);
 void unmountParty(int party_ix);
+#ifdef DVRP
+void unmountDVRPParty(int party_ix);
+int mountDVRPParty(const char *party);
+#endif
 void unmountAll(void);
 int setFileList(const char *path, const char *ext, FILEINFO *files, int cnfmode);
 

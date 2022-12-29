@@ -1,8 +1,11 @@
 #.SILENT:
 
-SMB = 0
+SMB ?= 0
+DVRP ?= 0
+SIO_DEBUG ?= 0
+ETH ?= 1
+IOP_RESET ?= 1
 EXFAT ?= 0
-#set SMB to 1 to build uLe with smb support
 
 EE_BIN = BOOT-UNC.ELF
 EE_BIN_PKD = BOOT.ELF
@@ -13,11 +16,16 @@ EE_OBJS = main.o pad.o config.o elf.o draw.o loader_elf.o filer.o \
 	hdd.o hdl_rpc.o hdl_info_irx.o editor.o timer.o jpgviewer.o icon.o lang.o\
 	font_uLE.o makeicon.o chkesr.o allowdvdv_irx.o ds34usb.o libds34usb.a ds34bt.o libds34bt.a
 ifeq ($(SMB),1)
-	EE_OBJS += smbman.o
+    EE_OBJS += smbman.o
 endif
 
 ifeq ($(ETH),1)
-	EE_OBJS += ps2smap_irx.o ps2ftpd_irx.o ps2host_irx.o ps2netfs_irx.o ps2ip_irx.o
+    EE_OBJS += ps2smap_irx.o ps2ftpd_irx.o ps2host_irx.o ps2netfs_irx.o ps2ip_irx.o
+endif
+
+ifeq ($(DVRP),1)
+    EE_OBJS += dvrdrv_irx.o dvrfile_irx.o
+    EE_CFLAGS += -DDVRP
 endif
 
 EE_INCS := -I$(PS2DEV)/gsKit/include -I$(PS2SDK)/ports/include -Ioldlibs/libcdvd/ee
@@ -29,6 +37,10 @@ EE_CFLAGS := -mgpopt -G10240 -G0 -DNEWLIB_PORT_AWARE -D_EE
 
 ifeq ($(SMB),1)
     EE_CFLAGS += -DSMB
+endif
+
+ifeq ($(DVRP),1)
+    EE_CFLAGS += -DDVRP
 endif
 
 ifeq ($(SIO_DEBUG),1)
@@ -95,6 +107,7 @@ current_flags:
 	@echo "DEFAULT_COLORS - set to 1 to use default uLaunchELF colors, otherwise, custom values will be used"
 	@echo "TMANIP: set to 1 to compile with time manipulation function, if set to 2 the function will manipulate the date of a specific folder (to avoid issues caused by noobs) (the specific folder name used is the macro HACK_FOLDER, wich is defined at launchelf.h)"
 	@echo "LANG: use a custom language file to compile wLe (by now only SPA and ENG are available)"
+	@echo "DVRP: support for PSX DESR encrypted HDD area"
 
 mcman_irx.s: $(PS2SDK)/iop/irx/mcman.irx
 	bin2s $< $@ mcman_irx
@@ -162,6 +175,14 @@ ps2hdd_irx.s: $(PS2SDK)/iop/irx/ps2hdd-osd.irx
 ps2fs_irx.s: $(PS2SDK)/iop/irx/ps2fs.irx
 	bin2s $< $@ ps2fs_irx
 	
+ifeq ($(DVRP),1)
+dvrdrv_irx.s: iop/dvrdrv.irx
+	bin2s $< $@ dvrdrv_irx
+
+dvrfile_irx.s: iop/dvrfile.irx
+	bin2s $< $@ dvrfile_irx
+endif
+
 ifeq ($(ETH),1)
 ps2netfs_irx.s: $(PS2SDK)/iop/irx/ps2netfs.irx
 	bin2s $< $@ ps2netfs_irx

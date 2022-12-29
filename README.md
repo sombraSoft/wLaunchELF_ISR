@@ -27,6 +27,7 @@ It features:
 - `EE_SIO`: supports printing debug information via the EmotionEngine serial port (useless for users)
 - `NO_NETWORK`: network features are disabled and network IRX drivers stripped away, with the purpose of making a smaller wLaunchELF for users who don't use network
 - `NO_IOP_RESET`: build of wLaunchELF wich does not reset the I/O CPU upon startup, __DON'T USE IF YOU DON'T KNOW WHAT IT MEANS__
+- `DVRP`: support for accessing encrypted portion of the PSX-DESR Internal HDD memory (in filebrowser represented as `dvr_hdd0:`)
 - `EXFAT`: support for accessing EXFAT filesystems from USB devices
 
 # **original readme**
