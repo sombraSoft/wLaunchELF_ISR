@@ -301,25 +301,6 @@ static void Show_About_uLE(void)
 			PrintPos(04, hpos, TextRow);
 			PrintPos(05, hpos, "Mod created by: Matias Israelson");
 			PrintPos(-1, hpos, "DS3/DS4 support by Alex Parrado");
-			PrintPos(-1, hpos, "Build features:"
-#ifdef SMB
-" SMB:1"
-#else
-" SMB:0"
-#endif
-
-#ifdef ETH
-" ETH:1"
-#else
-" ETH:0"
-#endif	
-
-#ifdef NO_IOP_RESET
-" IOP_RESET=0"
-#else
-" IOP_RESET=1"
-#endif
-);
 			PrintPos(-1, hpos, "Project maintainers:  sp193 & AKuHAK");
 			PrintPos(-1, hpos, "  ");
 			PrintPos(-1, hpos, "uLaunchELF Project maintainers:");
@@ -337,6 +318,78 @@ static void Show_About_uLE(void)
 			PrintPos(-1, hpos, "   github.com/israpps/wLaunchELF_ISR/releases");
 			PrintPos(-1, hpos, "Ancestral project: LaunchELF v3.41 by Mirakichi");
 			//PrintPos(-1, hpos, "Created by:        Mirakichi");
+		}  //ends if(event||post_event)
+		drawScr();// https://github.com/israpps/wLaunchELF_ISR/tree/41e43b3-mod
+		post_event = event;
+		event = 0;
+	}  //ends while
+	   //----- End of event loop -----
+}
+
+static void Show_build_info(void)
+{
+	char TextRow[256];
+	int event, post_event = 0;
+	int hpos = 16;
+
+	event = 1;  //event = initial entry
+	//----- Start of event loop -----
+	while (1) {
+		//Pad response section
+		waitAnyPadReady();
+		if (readpad() && new_pad) {
+			event |= 2;
+			if (setting->GUI_skin[0]) {
+				GUI_active = 1;
+				loadSkin(BACKGROUND_PIC, 0, 0);
+			}
+			break;
+		}
+
+		//Display section
+		if (event || post_event) {  //NB: We need to update two frame buffers per event
+			clrScr(setting->color[COLOR_BACKGR]);
+			sprintf(TextRow, "About wLaunchELF %s  %s", ULE_VERSION, ULE_VERDATE);
+			PrintPos(03, hpos, TextRow);
+			sprintf(TextRow, " commit: %s (based on commit 41e4ebe)", GIT_HASH);
+			PrintPos(04, hpos, TextRow);
+			PrintPos(05, hpos, "Mod created by: Matias Israelson");
+			PrintPos(-1, hpos, "DS3/DS4 support by Alex Parrado");
+			PrintPos(-1, hpos, "Build features:");
+			
+			PrintPos(-1, hpos, 
+#ifdef SMB
+" SMB:1"
+#else
+" SMB:0"
+#endif
+);
+			PrintPos(-1, hpos, 
+#ifdef ETH
+" ETH:1"
+#else
+" ETH:0"
+#endif	
+);
+			PrintPos(-1, hpos, 
+#ifdef NO_IOP_RESET
+" IOP_RESET=0"
+#else
+" IOP_RESET=1"
+#endif
+);
+			PrintPos(-1, hpos, 
+#ifdef EXFAT
+" EXFAT=0"
+#else
+" EXFAT=1"
+#endif
+);
+
+			PrintPos(-1, hpos, "Mod Release site:");
+			PrintPos(-1, hpos, "   github.com/israpps/wLaunchELF_ISR/releases");
+
+
 		}  //ends if(event||post_event)
 		drawScr();// https://github.com/israpps/wLaunchELF_ISR/tree/41e43b3-mod
 		post_event = event;
@@ -2070,6 +2123,13 @@ Recurse_for_ESR:  //Recurse here for PS2Disc command with ESR disc
 			loadSkin(BACKGROUND_PIC, 0, 0);
 		}
 		Show_About_uLE();
+		return;
+	} else if (!stricmp(path, setting->Misc_Show_Build_Info)) {
+		if (setting->GUI_skin[0]) {
+			GUI_active = 0;
+			loadSkin(BACKGROUND_PIC, 0, 0);
+		}
+		Show_build_info();
 		return;
 	} else if (!strncmp(path, "cdfs", 4)) {
 		CDVD_FlushCache();
