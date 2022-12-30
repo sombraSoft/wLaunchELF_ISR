@@ -14,7 +14,7 @@ jobs:
       matrix:
         eth: ["ETH=0", "ETH=1"]
         exfat: ["EXFAT=0", "EXFAT=1"]
-        dvrp: ["DVRP=0", "DVRP=1"]
+        #dvrp: ["DVRP=0", "DVRP=1"]
         sior: ["SIO_DEBUG=0", "SIO_DEBUG=1"]
     runs-on: ubuntu-latest
     container: ps2dev/ps2dev:v1.0
