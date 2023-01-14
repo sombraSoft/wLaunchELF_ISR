@@ -25,7 +25,7 @@ EE_INCS := -I$(PS2DEV)/gsKit/include -I$(PS2SDK)/ports/include -Ioldlibs/libcdvd
 
 EE_LDFLAGS := -L$(PS2DEV)/gsKit/lib -L$(PS2SDK)/ports/lib -Loldlibs/libcdvd/lib -s
 EE_LIBS = -lgskit -ldmakit -ljpeg -lpad -lmc -lhdd -lcdvdfs -lkbd -lmf \
-	-lcdvd -lc -lfileXio -lpatches -lpoweroff -ldebug -lc -lsior
+	-lcdvd -lc -lfileXio -lpatches -lpoweroff -ldebug -lc
 EE_CFLAGS := -mgpopt -G10240 -G0 -DNEWLIB_PORT_AWARE -D_EE
 
 ifeq ($(SMB),1)
@@ -52,6 +52,7 @@ ifeq ($(SIO_DEBUG),1)
     EE_CFLAGS += -DSIO_DEBUG
     EE_OBJS += sior_irx.o
     HAS_EESIO = -SIO_DEBUG
+    EE_LIBS += -lsior
 endif
 
 ifeq ($(IOP_RESET),0)
