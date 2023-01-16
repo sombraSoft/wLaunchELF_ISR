@@ -956,7 +956,7 @@ static void ShowDebugInfo(void)
 			PrintRow(-1, TextRow);
 			if ((ROMVersion < 0x230) && (ROMVersion > 0x130))
 			{
-				sprintf(TextRow, "Specific System Update KELF == \"B%cEXEC-SYSTEM/osd%03x.elf\"", rough_region, (ROMVersion)&~0x0F);
+				sprintf(TextRow, "Specific System Update KELF == \"B%cEXEC-SYSTEM/osd%03x.elf\"", rough_region, (ROMVersion+10)&~0x0F);
 				PrintRow(-1, TextRow);
 			}
 			sprintf(TextRow, "boot_path == \"%s\"", boot_path);
