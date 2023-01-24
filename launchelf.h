@@ -209,6 +209,7 @@ extern int TV_mode;
 extern int swapKeys;
 extern int GUI_active;  // Skin and Main Skin switch
 extern int cdmode;      //Last detected disc type
+extern u8 console_is_PSX;
 
 void load_vmc_fs(void);
 #ifdef ETH
@@ -221,6 +222,7 @@ int uLE_InitializeRegion(void);
 int uLE_cdDiscValid(void);
 int uLE_cdStop(void);
 int IsSupportedFileType(char *path);
+void loadFlashModules(void);
 
 /* elf.c */
 int checkELFheader(char *filename);
