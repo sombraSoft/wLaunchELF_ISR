@@ -24,7 +24,20 @@ IMPORT_BIN2C(ps2ftpd_irx);
 IMPORT_BIN2C(smbman_irx);
 #endif
 
-#ifdef SIO_DEBUG
+#ifdef UDPTTY
+IMPORT_BIN2C(udptty_irx);
+#endif
+
+#ifdef MX4SIO
+IMPORT_BIN2C(mx4sio_bd_irx);
+#endif
+
+#ifdef HOMEBREW_SIO2MAN
+IMPORT_BIN2C(sio2man_irx);
+IMPORT_BIN2C(padman_irx);
+#endif
+
+#ifdef SIOR
 IMPORT_BIN2C(sior_irx);
 #endif
 
@@ -212,7 +225,7 @@ DiscType DiscTypes[] = {
 
 //Static function declarations
 static int PrintRow(int row_f, char *text_p);
-static int PrintPos(int row_f, int column, char *text_p);
+static int PrintPos(int row_f, int column, char *text_p, int COLORID);
 static void Show_About_uLE(void);
 static void getIpConfig(void);
 static void setLaunchKeys(void);
@@ -276,7 +289,7 @@ static int PrintRow(int row_f, char *text_p)
 //---------------------------------------------------------------------------
 //Function to print a text row with text positioning
 //------------------------------
-static int PrintPos(int row_f, int column, char *text_p)
+static int PrintPos(int row_f, int column, char *text_p, int COLORID)
 {
 	static int row;
 	int x = (Menu_start_x + 4 + column * FONT_WIDTH);
@@ -285,7 +298,7 @@ static int PrintPos(int row_f, int column, char *text_p)
 	if (row_f >= 0)
 		row = row_f;
 	y = (Menu_start_y + FONT_HEIGHT * row++);
-	printXY(text_p, x, y, setting->color[COLOR_TEXT], TRUE, 0);
+	printXY(text_p, x, y, setting->color[COLORID], TRUE, 0);
 	return row;
 }
 //------------------------------
@@ -317,27 +330,27 @@ static void Show_About_uLE(void)
 		if (event || post_event) {  //NB: We need to update two frame buffers per event
 			clrScr(setting->color[COLOR_BACKGR]);
 			sprintf(TextRow, "About wLaunchELF %s  %s", ULE_VERSION, ULE_VERDATE);
-			PrintPos(03, hpos, TextRow);
+			PrintPos(03, hpos, TextRow, COLOR_SELECT);
 			sprintf(TextRow, " commit: %s (based on commit 41e4ebe)", GIT_HASH);
-			PrintPos(04, hpos, TextRow);
-			PrintPos(05, hpos, "Mod created by: Matias Israelson");
-			PrintPos(-1, hpos, "DS3/DS4 support by Alex Parrado");
-			PrintPos(-1, hpos, "Project maintainers:  sp193 & AKuHAK");
-			PrintPos(-1, hpos, "  ");
-			PrintPos(-1, hpos, "uLaunchELF Project maintainers:");
-			PrintPos(-1, hpos, "  Eric Price       (aka: 'E P')");
-			PrintPos(-1, hpos, "  Ronald Andersson (aka: 'dlanor')");
-			PrintPos(-1, hpos, " ");
-			PrintPos(-1, hpos, "Other contributors:");
-			PrintPos(-1, hpos, "  Polo35, radad, Drakonite, sincro");
-			PrintPos(-1, hpos, "  kthu, Slam-Tilt, chip, pixel, Hermes");
-			PrintPos(-1, hpos, "  and others in the PS2Dev community");
-			PrintPos(-1, hpos, " ");
-			PrintPos(-1, hpos, "Main release site:");
-			PrintPos(-1, hpos, "   github.com/ps2homebrew/wLaunchELF/releases");
-			PrintPos(-1, hpos, "Mod Release site:");
-			PrintPos(-1, hpos, "   github.com/israpps/wLaunchELF_ISR/releases");
-			PrintPos(-1, hpos, "Ancestral project: LaunchELF v3.41 by Mirakichi");
+			PrintPos(04, hpos, TextRow, COLOR_TEXT);
+			PrintPos(05, hpos, "Mod created by: Matias Israelson", COLOR_TEXT);
+			PrintPos(-1, hpos, "DS3/DS4 support by Alex Parrado", COLOR_TEXT);
+			PrintPos(-1, hpos, "Project maintainers:  sp193 & AKuHAK", COLOR_TEXT);
+			PrintPos(-1, hpos, "  ", COLOR_TEXT);
+			PrintPos(-1, hpos, "uLaunchELF Project maintainers:", COLOR_TEXT);
+			PrintPos(-1, hpos, "  Eric Price       (aka: 'E P')", COLOR_TEXT);
+			PrintPos(-1, hpos, "  Ronald Andersson (aka: 'dlanor')", COLOR_TEXT);
+			PrintPos(-1, hpos, " ", COLOR_TEXT);
+			PrintPos(-1, hpos, "Other contributors:", COLOR_TEXT);
+			PrintPos(-1, hpos, "  Polo35, radad, Drakonite, sincro", COLOR_TEXT);
+			PrintPos(-1, hpos, "  kthu, Slam-Tilt, chip, pixel, Hermes", COLOR_TEXT);
+			PrintPos(-1, hpos, "  and others in the PS2Dev community", COLOR_TEXT);
+			PrintPos(-1, hpos, " ", COLOR_TEXT);
+			PrintPos(-1, hpos, "Main release site:", COLOR_TEXT);
+			PrintPos(-1, hpos, "   github.com/ps2homebrew/wLaunchELF/releases", COLOR_TEXT);
+			PrintPos(-1, hpos, "Mod Release site:", COLOR_SELECT);
+			PrintPos(-1, hpos, "   github.com/israpps/wLaunchELF_ISR/releases", COLOR_TEXT);
+			PrintPos(-1, hpos, "Ancestral project: LaunchELF v3.41 by Mirakichi", COLOR_TEXT);
 			//PrintPos(-1, hpos, "Created by:        Mirakichi");
 		}  //ends if(event||post_event)
 		drawScr();// https://github.com/israpps/wLaunchELF_ISR/tree/41e43b3-mod
@@ -370,13 +383,9 @@ static void Show_build_info(void)
 		//Display section
 		if (event || post_event) {  //NB: We need to update two frame buffers per event
 			clrScr(setting->color[COLOR_BACKGR]);
-			sprintf(TextRow, "About wLaunchELF %s  %s", ULE_VERSION, ULE_VERDATE);
-			PrintPos(03, hpos, TextRow);
-			sprintf(TextRow, " commit: %s (based on commit 41e4ebe)", GIT_HASH);
-			PrintPos(04, hpos, TextRow);
-			PrintPos(05, hpos, "Mod created by: Matias Israelson");
-			PrintPos(-1, hpos, "DS3/DS4 support by Alex Parrado");
-			PrintPos(-1, hpos, "Build features:");
+			sprintf(TextRow, " wLaunchELF %s (%s)", ULE_VERSION, GIT_HASH);
+			PrintPos(03, hpos, TextRow, COLOR_TEXT);
+			PrintPos(-1, hpos, "Build features:", COLOR_SELECT);
 			
 			PrintPos(-1, hpos, 
 #ifdef SMB
@@ -389,7 +398,7 @@ static void Show_build_info(void)
 #else
 " ETH:0"
 #endif	
-);
+, COLOR_TEXT);
 			PrintPos(-1, hpos, 
 #ifdef XFROM
 " XFROM=1"
@@ -401,7 +410,7 @@ static void Show_build_info(void)
 #else
 " DVRP_HDD=0"
 #endif
-);
+, COLOR_TEXT);
 
 			PrintPos(-1, hpos, 
 #ifdef EXFAT
@@ -414,17 +423,45 @@ static void Show_build_info(void)
 #else
 " DS34=0"
 #endif
-);
+, COLOR_TEXT);
+			PrintPos(-1, hpos, 
+#ifdef MX4SIO
+" MX4SIO=1"
+#else
+" MX4SIO=0"
+#endif
+, COLOR_TEXT);
+#if defined(UDPTTY) || defined(SIO_DEBUG) || defined(SIOR) || defined(NO_IOP_RESET)
+
+
+			PrintPos(-1, hpos, "Debug Features:", COLOR_SELECT);
 			PrintPos(-1, hpos, 
 #ifdef NO_IOP_RESET
 " IOP_RESET=0"
 #else
 " IOP_RESET=1"
 #endif
-);
-
-			PrintPos(-1, hpos, "Mod Release site:");
-			PrintPos(-1, hpos, "   github.com/israpps/wLaunchELF_ISR/releases");
+#ifdef UDPTTY
+" UDPTTY=1"
+#else
+" UDPTTY=0"
+#endif
+, COLOR_TEXT);
+			PrintPos(-1, hpos, 
+#ifdef SIO_DEBUG
+" SIO_DEBUG=1"
+#else
+" SIO_DEBUG=0"
+#endif
+#ifdef SIOR
+" SIOR=1"
+#else
+" SIOR=0"
+#endif
+, COLOR_TEXT);
+#endif
+			PrintPos(-1, hpos, "Mod Release site:", COLOR_TEXT);
+			PrintPos(-1, hpos, "   github.com/israpps/wLaunchELF_ISR/releases", COLOR_TEXT);
 
 
 		}  //ends if(event||post_event)
@@ -1065,43 +1102,59 @@ static void load_ps2netfs(void)
 //---------------------------------------------------------------------------
 static void loadBasicModules(void)
 {
-	int ret;
+	int ret, id;
 
-	SifExecModuleBuffer(iomanx_irx, size_iomanx_irx, 0, NULL, &ret);
-	SifExecModuleBuffer(filexio_irx, size_filexio_irx, 0, NULL, &ret);
+	id = SifExecModuleBuffer(iomanx_irx, size_iomanx_irx, 0, NULL, &ret);
+	DPRINTF("IOMANX.IRX id=%d ret=%d\n", id, ret);
+	id = SifExecModuleBuffer(filexio_irx, size_filexio_irx, 0, NULL, &ret);
+	DPRINTF("FILEXIO.IRX id=%d ret=%d\n", id, ret);
 
-	SifExecModuleBuffer(allowdvdv_irx, size_allowdvdv_irx, 0, NULL, &ret);  //unlocks cdvd for reading on psx dvr
-
-	SifLoadModule("rom0:SIO2MAN", 0, NULL);
+	id = SifExecModuleBuffer(allowdvdv_irx, size_allowdvdv_irx, 0, NULL, &ret);  //unlocks cdvd for reading on psx dvr
+	DPRINTF("ALLOWDVD.IRX id=%d ret=%d\n", id, ret);
+#ifdef HOMEBREW_SIO2MAN
+	id = SifExecModuleBuffer(sio2man_irx, size_sio2man_irx, 0, NULL, &ret);
+	DPRINTF("SIO2MAN.IRX id=%d ret=%d\n", id, ret);
+#else
+	id = SifLoadModule("rom0:SIO2MAN", 0, NULL);
+	DPRINTF("rom0:PADMAN id=%d\n", id);
+#endif
 
 #ifdef SIO_DEBUG
-	int id;
 	// I call this just after SIO2MAN have been loaded
 	sio_init(38400, 0, 0, 0, 0);
 	DPRINTF("Hello from EE SIO!\n");
-
+#ifdef SIOR
 	SIOR_Init(0x20);
 
 	id = SifExecModuleBuffer(sior_irx, size_sior_irx, 0, NULL, &ret);
-	printf("\t sior id=%d _start ret=%d\n", id, ret);
-	DPRINTF("sior id=%d _start ret=%d\n", id, ret);
+	DPRINTF("SIOR.IRX id=%d ret=%d\n", id, ret);
+#endif
 #endif
 
-	SifExecModuleBuffer(mcman_irx, size_mcman_irx, 0, NULL, &ret);  //Home
+	id = SifExecModuleBuffer(mcman_irx, size_mcman_irx, 0, NULL, &ret);  //Home
+	DPRINTF("MCMAN.IRX id=%d ret=%d\n", id, ret);
 	//SifLoadModule("rom0:MCMAN", 0, NULL); //Sony
-	SifExecModuleBuffer(mcserv_irx, size_mcserv_irx, 0, NULL, &ret);  //Home
+	id = SifExecModuleBuffer(mcserv_irx, size_mcserv_irx, 0, NULL, &ret);  //Home
+	DPRINTF("MCSERV.IRX id=%d ret=%d\n", id, ret);
 	//SifLoadModule("rom0:MCSERV", 0, NULL); //Sony
-	SifLoadModule("rom0:PADMAN", 0, NULL);
+#ifdef HOMEBREW_SIO2MAN
+	id = SifExecModuleBuffer(padman_irx, size_padman_irx, 0, NULL, &ret);  //Home
+	DPRINTF("PADMAN.IRX id=%d ret=%d\n", id, ret);
+#else
+	id = SifLoadModule("rom0:PADMAN", 0, NULL);
+	DPRINTF("rom0:PADMAN id=%d\n", id);
+#endif
 }
 //------------------------------
 //endfunc loadBasicModules
 //---------------------------------------------------------------------------
 static void loadCdModules(void)
 {
-	int ret;
+	int ret, id;
 
 	if (!have_cdvd) {
-		SifExecModuleBuffer(cdvd_irx, size_cdvd_irx, 0, NULL, &ret);
+		id = SifExecModuleBuffer(cdvd_irx, size_cdvd_irx, 0, NULL, &ret);
+		DPRINTF("CDVD.IRX id=%d, ret=%d\n", id, ret);
 		sceCdInit(SCECdINoD);  // SCECdINoD init without check for a disc. Reduces risk of a lockup if the drive is in a erroneous state.
 		CDVD_Init();
 		have_cdvd = 1;
@@ -1271,15 +1324,17 @@ static int loadExternalModule(char *modPath, void *defBase, int defSize)
 	char filePath[MAX_PATH];
 	int ext_OK, def_OK;  //Flags success for external and default module
 	int dummy;
-
+	DPRINTF("%s: looking for [%s]\n", __FUNCTION__, modPath);
 	ext_OK = 0;
 	def_OK = 0;
 	getExternalFilePath(modPath, filePath);
 
 	ext_OK = (SifLoadModule(filePath, 0, NULL) >= 0);
 	if (!ext_OK) {
+		DPRINTF("\tNot found!\n");
 		if (defBase && defSize) {
 			def_OK = SifExecModuleBuffer(defBase, defSize, 0, NULL, &dummy);
+			DPRINTF("\tLoaded default embedded version: ID=%d, ret=%d\n", def_OK, dummy);
 		}
 	}
 	if (ext_OK)
@@ -1302,9 +1357,10 @@ static void loadUsbDModule(void)
 #ifdef DS34
 static void loadDs34Modules(void)
 {
+	DPRINTF("Loading DS34\n");
     if (!have_ds34) {
-        if (loadExternalModule("", &ds34usb_irx, size_ds34usb_irx))
-            if (loadExternalModule("", &ds34bt_irx, size_ds34bt_irx))
+        if (loadExternalModule("DS34USB.IRX", &ds34usb_irx, size_ds34usb_irx))
+            if (loadExternalModule("DS34BT.IRX", &ds34bt_irx, size_ds34bt_irx))
                 have_ds34 = 1;
     }
 }
@@ -1315,16 +1371,19 @@ static void loadDs34Modules(void)
 static void loadUsbModules(void)
 #ifdef EXFAT
 {
-    int ret;
+    int ret, ID;
 
     loadUsbDModule();
     if (have_usbd && !have_usb_mass && (USB_mass_loaded = loadExternalModule(setting->usbmass_file, NULL, 0))) {
         delay(3);
         have_usb_mass = 1;
     } else if (have_usbd && !have_usb_mass) {
-        SifExecModuleBuffer(bdm_irx, size_bdm_irx, 0, NULL, &ret);
-        SifExecModuleBuffer(bdmfs_fatfs_irx, size_bdmfs_fatfs_irx, 0, NULL, &ret);
-        SifExecModuleBuffer(usbmass_bd_irx, size_usbmass_bd_irx, 0, NULL, &ret);
+        ID = SifExecModuleBuffer(bdm_irx, size_bdm_irx, 0, NULL, &ret);
+		DPRINTF(" [BDM.IRX] ID=%d, ret=%d\n", ID, ret);
+        ID = SifExecModuleBuffer(bdmfs_fatfs_irx, size_bdmfs_fatfs_irx, 0, NULL, &ret);
+		DPRINTF(" [BDMFS_FATFS.IRX] ID=%d, ret=%d\n", ID, ret);
+        ID = SifExecModuleBuffer(usbmass_bd_irx, size_usbmass_bd_irx, 0, NULL, &ret);
+		DPRINTF(" [USBMASS_BD.IRX] ID=%d, ret=%d\n", ID, ret);
         delay(3);
         USB_mass_loaded = 1;
         have_usb_mass = 1;
@@ -1335,6 +1394,10 @@ static void loadUsbModules(void)
         USB_mass_max_drives = 1;  // else allow only one mass drive
 #ifdef DS34
 	loadDs34Modules();
+#endif
+#ifdef MX4SIO
+	ID = SifExecModuleBuffer(mx4sio_bd_irx, size_mx4sio_bd_irx, 0, NULL, &ret);
+	DPRINTF(" [MX4SIO_BD.IRX] ID=%d, ret=%d\n", ID, ret);
 #endif
 }
 #else
@@ -1404,6 +1467,7 @@ static void closeAllAndPoweroff(void)
 //---------------------------------------------------------------------------
 static void poweroffHandler(int i)
 {
+	if (!is_early_init) drawMsg(LNG(Powering_Off_Console));
 	closeAllAndPoweroff();
 }
 //------------------------------
@@ -2315,13 +2379,25 @@ static void Reset()
 #ifdef XFROM
 	have_Flash_modules = 0;
 #endif
+#ifdef UDPTTY
+int i, d;
+	load_ps2ip();
+	i = SifExecModuleBuffer(&udptty_irx, size_udptty_irx, 0, NULL, &d);
+    DPRINTF("[UDPTTY.IRX]: id=%d, ret=%d\n", i, d);
+#endif
 	loadBasicModules();
 	loadCdModules();
 
 	fileXioInit();
 	//Increase the FILEIO R/W buffer size to reduce overhead.
 	fileXioSetRWBufferSize(128 * 1024);
+	DPRINTF("Initializing mc rpc\n");
+#ifdef HOMEBREW_SIO2MAN
+	mcInit(MC_TYPE_XMC);
+#else
 	mcInit(MC_TYPE_MC);
+#endif
+	DPRINTF("RESET FINISHED\n");
 	//	setupPad();
 }
 //------------------------------
@@ -2442,7 +2518,7 @@ int main(int argc, char *argv[])
 	int RunELF_index, nElfs = 0;
 	enum BOOT_DEVICE boot = BOOT_DEV_UNKNOWN;
 	int CNF_error = -1;  //assume error until CNF correctly loaded
-	int i;
+	int i, d;
 
 	boot_argc = argc;
 	for (i = 0; (i < argc) && (i < 8); i++)
@@ -2454,6 +2530,7 @@ int main(int argc, char *argv[])
 		console_is_PSX = 1;
 	LaunchElfDir[0] = 0;
 	boot_path[0] = 0;
+
 	if ((argc > 0) && argv[0]) {
 		strcpy(LaunchElfDir, argv[0]);  //Default LaunchElfDir to the boot path.
 		strcpy(boot_path, argv[0]);
@@ -2571,11 +2648,15 @@ int main(int argc, char *argv[])
 	swapKeys = setting->swapKeys;
 
 	//It's time to load and init drivers
+	DPRINTF("Getting IPCONFIG\n");
 	getIpConfig();
+	DPRINTF("Loading USB modules\n");
 	loadUsbModules();
 
 	WaitTime = Timer();
+	DPRINTF("setup pad\n");
 	setupPad();  //Comment out this line when using early setupPad above
+	DPRINTF("Starting keyboard\n");
 	startKbd();
 	WaitTime = Timer();
 
