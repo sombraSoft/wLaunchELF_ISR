@@ -1,9 +1,27 @@
+ifeq ($(MX4SIO),0) # no mx4sio? use ps2dev:1.0 drivers
+  MCMAN_SOURCE = $(PS2SDK)/iop/irx/mcman.irx
+  MCSERV_SOURCE = $(PS2SDK)/iop/irx/mcserv.irx
+  SIO2MAN_SOURCE = $(PS2SDK)/iop/irx/sio2man.irx
+else # if we have mx4sio use newer IRX to avoid deadlocks when opening common memory card
+  MCMAN_SOURCE = iop/mcman.irx
+  MCSERV_SOURCE = iop/mcserv.irx
+  SIO2MAN_SOURCE = iop/sio2man.irx
+endif
 
-$(EE_ASM_DIR)mcman_irx.s: $(PS2SDK)/iop/irx/mcman.irx | $(EE_ASM_DIR)
+#---{ MC }---#
+$(EE_ASM_DIR)mcman_irx.s: $(MCMAN_SOURCE) | $(EE_ASM_DIR)
 	$(BIN2S) $< $@ mcman_irx
 
-$(EE_ASM_DIR)mcserv_irx.s: $(PS2SDK)/iop/irx/mcserv.irx | $(EE_ASM_DIR)
+$(EE_ASM_DIR)mcserv_irx.s: $(MCSERV_SOURCE) | $(EE_ASM_DIR)
 	$(BIN2S) $< $@ mcserv_irx
+
+$(EE_ASM_DIR)sio2man.s: $(SIO2MAN_SOURCE) | $(EE_ASM_DIR)
+	$(BIN2S) $< $@ sio2man_irx
+
+	
+$(EE_ASM_DIR)mx4sio_bd.s: iop/mx4sio_bd.irx | $(EE_ASM_DIR)
+	$(BIN2S) $< $@ mx4sio_bd_irx
+#---{ USB }---#
 
 $(EE_ASM_DIR)usbd_irx.s: $(PS2SDK)/iop/irx/usbd.irx | $(EE_ASM_DIR)
 	$(BIN2S) $< $@ usbd_irx
@@ -22,6 +40,8 @@ $(EE_ASM_DIR)usbhdfsd_irx.s: $(PS2SDK)/iop/irx/usbhdfsd.irx | $(EE_ASM_DIR)
 	$(BIN2S) $< $@ usb_mass_irx
 endif
 
+# ----- #
+
 oldlibs/libcdvd/lib/cdvd.irx: oldlibs/libcdvd
 	$(MAKE) -C $<
 
@@ -39,9 +59,6 @@ $(EE_ASM_DIR)filexio_irx.s: $(PS2SDK)/iop/irx/fileXio.irx | $(EE_ASM_DIR)
 
 $(EE_ASM_DIR)ps2dev9_irx.s: $(PS2SDK)/iop/irx/ps2dev9.irx | $(EE_ASM_DIR)
 	$(BIN2S) $< $@ ps2dev9_irx
-	
-$(EE_ASM_DIR)mx4sio_bd.s: iop/mx4sio_bd.irx | $(EE_ASM_DIR)
-	$(BIN2S) $< $@ mx4sio_bd_irx
 
 ifeq ($(ETH),1)
 $(EE_ASM_DIR)ps2ip_irx.s: $(PS2SDK)/iop/irx/ps2ip.irx | $(EE_ASM_DIR)
@@ -118,9 +135,6 @@ $(EE_ASM_DIR)ds34bt.s: ds34bt/iop/ds34bt.irx | $(EE_ASM_DIR)
 
 $(EE_ASM_DIR)padman.s: $(PS2SDK)/iop/irx/padman.irx | $(EE_ASM_DIR)
 	$(BIN2S) $< $@ padman_irx
-
-$(EE_ASM_DIR)sio2man.s: $(PS2SDK)/iop/irx/sio2man.irx | $(EE_ASM_DIR)
-	$(BIN2S) $< $@ sio2man_irx
 
 ifeq ($(SMB),1)
 $(EE_ASM_DIR)smbman_irx.s: $(PS2SDK)/iop/irx/smbman.irx | $(EE_ASM_DIR)
