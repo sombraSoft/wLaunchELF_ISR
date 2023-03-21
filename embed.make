@@ -1,8 +1,10 @@
 ifeq ($(MX4SIO),0) # no mx4sio? use ps2dev:1.0 drivers
+  $(info using ps2dev:1.0 mc drivers)
   MCMAN_SOURCE = $(PS2SDK)/iop/irx/mcman.irx
   MCSERV_SOURCE = $(PS2SDK)/iop/irx/mcserv.irx
   SIO2MAN_SOURCE = $(PS2SDK)/iop/irx/sio2man.irx
 else # if we have mx4sio use newer IRX to avoid deadlocks when opening common memory card
+  $(info using latest mc drivers)
   MCMAN_SOURCE = iop/mcman.irx
   MCSERV_SOURCE = iop/mcserv.irx
   SIO2MAN_SOURCE = iop/sio2man.irx
