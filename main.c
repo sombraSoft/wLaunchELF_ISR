@@ -2688,7 +2688,7 @@ int main(int argc, char *argv[])
 	RunPath[0] = 0;  //Nothing to run yet
 	cdmode = -1;     //flag unchecked cdmode state
 	event = 1;       //event = initial entry
-	DPRINTF("starting main menu event loop\n",);
+	DPRINTF("starting main menu event loop\n");
 	//----- Start of main menu event loop -----
 	while (1) {
 		int DiscType_ix;
