@@ -2528,6 +2528,7 @@ int main(int argc, char *argv[])
 	Init_Default_Language();
 	if (exists("rom0:PSXVER"))
 		console_is_PSX = 1;
+	DPRINTF("is PSX = %d\n", console_is_PSX);
 	LaunchElfDir[0] = 0;
 	boot_path[0] = 0;
 
@@ -2606,6 +2607,7 @@ int main(int argc, char *argv[])
 		boot = BOOT_DEVICE_HOST;
 	}
 #endif
+	DPRINTF("Boot device is %d\n", boot);
 	if (((p = strrchr(LaunchElfDir, '/')) == NULL) && ((p = strrchr(LaunchElfDir, '\\')) == NULL))
 		p = strrchr(LaunchElfDir, ':');
 	if (p != NULL)
@@ -2638,6 +2640,7 @@ int main(int argc, char *argv[])
 		}
 	}
 */
+	DPRINTF("setupGS()");
 	setupGS();
 	gsKit_clear(gsGlobal, GS_SETREG_RGBAQ(0x00, 0x00, 0x00, 0x00, 0x00));
 
@@ -2685,6 +2688,7 @@ int main(int argc, char *argv[])
 	RunPath[0] = 0;  //Nothing to run yet
 	cdmode = -1;     //flag unchecked cdmode state
 	event = 1;       //event = initial entry
+	DPRINTF("starting main menu event loop\n",);
 	//----- Start of main menu event loop -----
 	while (1) {
 		int DiscType_ix;
