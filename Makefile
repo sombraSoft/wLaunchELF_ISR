@@ -52,7 +52,7 @@ ifeq ($(DS34),1)
     HAS_DS34 = -DS34
     EE_CFLAGS += -DDS34
 else
-	EE_OBJS += pad.o
+    EE_OBJS += pad.o
 endif
 
 ifeq ($(DVRP),1)
@@ -62,10 +62,14 @@ ifeq ($(DVRP),1)
 endif
 
 ifeq ($(MX4SIO),1)
-    EE_OBJS += mx4sio_bd.o
-    EE_CFLAGS += -DMX4SIO
-    HAS_MX4SIO = -MX4SIO
-    SIO2MAN = 1
+    ifneq ($(EXFAT),1)
+        $(error MX4SIO Requested on build without BDM)
+    else
+        EE_OBJS += mx4sio_bd.o
+        EE_CFLAGS += -DMX4SIO
+        HAS_MX4SIO = -MX4SIO
+        SIO2MAN = 1
+    endif
 endif
 
 ifeq ($(SIO2MAN),1)
@@ -96,13 +100,18 @@ endif
 ifeq ($(ETH),1)
     EE_OBJS += ps2smap_irx.o ps2ftpd_irx.o ps2host_irx.o ps2netfs_irx.o ps2ip_irx.o
     EE_CFLAGS += -DETH
-	ifeq ($(UDPTTY),1)
+else
+    HAS_ETH = -NO_NETWORK
+endif
+
+ifeq ($(UDPTTY),1)
+    ifneq ($(ETH),1)
+    $(error UDPTTY requested on build without network modules)
+    else
       EE_OBJS += udptty.o
       HAS_UDPTTY = -UDPTTY
       EE_CFLAGS += -DUDPTTY -DCOMMON_PRINTF
-	endif
-else
-    HAS_ETH = -NO_NETWORK
+    endif
 endif
 
 ifeq ($(TMANIP),1)
