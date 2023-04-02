@@ -520,7 +520,7 @@ int RemoveParty(PARTYINFO Info)
 	int i, ret = 0;
 	char tmpName[MAX_ENTRY];
 
-	//printf("Remove Partition: %d\n", Info.Count);
+	DPRINTF("Remove Partition: %d\n", Info.Count);
 
 	drawMsg(LNG(Removing_Current_Partition));
 
@@ -607,7 +607,7 @@ end:
 //--------------------------------------------------------------
 int RenameGame(PARTYINFO Info, char *newName)
 {
-	//printf("Rename Game: %d\n", Info.Count);
+	DPRINTF("Rename Game: %d\n", Info.Count);
 	//int fd;
 	int i, num = 1, ret = 0;
 	char tmpName[MAX_ENTRY];

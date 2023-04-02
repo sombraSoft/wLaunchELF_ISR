@@ -31,11 +31,11 @@ int Hdl_Info_BindRpc()
 	while (retryCount--) {
 		ret = SifBindRpc(&client, HDL_IRX, 0);
 		if (ret < 0) {
-			printf("Hdl Info: EE Bind RPC Error.\n");
+			DPRINTF("Hdl Info: EE Bind RPC Error.\n");
 			return -1;
 		}
 		if (client.server != 0) {
-			printf("Hdl Info: EE Bind RPC Set.\n");
+			DPRINTF("Hdl Info: EE Bind RPC Set.\n");
 			break;
 		}
 

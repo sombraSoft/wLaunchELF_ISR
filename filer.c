@@ -1230,13 +1230,16 @@ int readXFROM(const char *path, FILEINFO *info, int max)
 	iox_dirent_t dirbuf;
 	char dir[MAX_PATH];
 	int i = 0, fd;
-	volatile int j;
+	//volatile int j;
 
 	loadFlashModules();
 
 	strcpy(dir, path);
 	if ((fd = fileXioDopen(path)) < 0)
+	{
+		DPRINTF("ERROR: Cannot open path '%s'\n", path);
 		return 0;
+	}
 
 	while (fileXioDread(fd, &dirbuf) > 0) {
 		if (dirbuf.stat.mode & FIO_S_IFDIR &&
@@ -1252,7 +1255,10 @@ int readXFROM(const char *path, FILEINFO *info, int max)
 			info[i].stats.FileSizeByte = dirbuf.stat.size;
 			info[i].stats.Reserve2 = dirbuf.stat.hisize;
 		} else
-			continue;  //Skip entry which is neither a file nor a folder
+			{
+				DPRINTF("ERROR: Skipping entry wich is neither file or folder '%s'\n", path);
+				continue;  //Skip entry which is neither a file nor a folder
+			}
 		strncpy((char *)info[i].stats.EntryName, info[i].name, 32);
 		memcpy((void *)&info[i].stats._Create, dirbuf.stat.ctime, 8);
 		memcpy((void *)&info[i].stats._Modify, dirbuf.stat.mtime, 8);
@@ -1277,16 +1283,20 @@ int readXFROM(const char *path, FILEINFO *info, int max)
 #endif
 void scan_USB_mass(void)
 {
+#ifdef MX4SIO
 	static char DEVID[5];
+#endif
 	int i, dd;
 	iox_stat_t chk_stat;
 	char mass_path[8] = "mass0:/";
 	if ((USB_mass_max_drives < 2)  //No need for dynamic lists with only one drive
 	    || (USB_mass_scanned && ((Timer() - USB_mass_scan_time) < 5000)))
 		return;
+
 #ifdef MX4SIO
 	mx4sio_idx = -1; //assume none is mx4sio // this MUST ALWAYS be after the USB_mass_scan_time check
 #endif
+
 	for (i = 0; i < USB_mass_max_drives; i++) {
 		mass_path[4] = '0' + i;
 		if (fileXioGetStat(mass_path, &chk_stat) < 0) {
@@ -1523,7 +1533,7 @@ int getDir(const char *path, FILEINFO *info)
 		n = readHOST(path, info, max);
 #endif
 #ifdef XFROM
-	else if (!strncmp(path, "xfrom", 3))
+	else if (!strncmp(path, "xfrom", 5))
 		n = readXFROM(path, info, max);
 #endif
 	else if (!strncmp(path, "vmc", 3))
@@ -3485,7 +3495,7 @@ int setFileList(const char *path, const char *ext, FILEINFO *files, int cnfmode)
 #ifdef XFROM
 		if (console_is_PSX)
 		{
-			strcpy(files[nfiles].name, "xfrom:");
+			strcpy(files[nfiles].name, "xfrom0:");
 			files[nfiles++].stats.AttrFile = sceMcFileAttrSubdir;
 		}
 #endif
@@ -4251,7 +4261,6 @@ int getFilePath(char *out, int cnfmode)
 					pfs_str[3] += latestMount;
 					ZoneFree = fileXioDevctl(pfs_str, PFSCTL_GET_ZONE_FREE, NULL, 0, NULL, 0);
 					ZoneSize = fileXioDevctl(pfs_str, PFSCTL_GET_ZONE_SIZE, NULL, 0, NULL, 0);
-					//printf("ZoneFree==%d  ZoneSize==%d\r\n", ZoneFree, ZoneSize);
 					freeSpace = ZoneFree * ZoneSize;
 					vfreeSpace = TRUE;
 #ifdef DVRP
@@ -4565,7 +4574,7 @@ void submenu_func_GetSize(char *mess, char *path, FILEINFO *files)
 				size = -1;
 		}
 	}
-	printf("size result = %lu\r\n", size);
+	DPRINTF("size result = %lu\r\n", size);
 	if (size < 0) {
 		strcpy(mess, LNG(Size_test_Failed));
 		text_pos = strlen(mess);
