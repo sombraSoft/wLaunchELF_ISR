@@ -94,7 +94,7 @@ jobs:
     needs: [release]
     strategy:
       matrix:
-        repos: [israpps/FreeMcBoot-Installer, israpps/Funtuna-Fork, israpps/DiagBox, israpps/PlayStation2-Basic-BootLoader]
+        repos: [israpps/FreeMcBoot-Installer, israpps/Funtuna-Fork , israpps/PlayStation2-Basic-BootLoader]
     steps:
     - name: trigger israpps auto-update system
       if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
