@@ -13,11 +13,11 @@ XFROM ?= 0
 UDPTTY ?= 0
 MX4SIO ?= 0
 SIO2MAN ?= 0
-SIOR ?= 0
+TTY2SIOR ?= 0
 # ----------------------------- #
 .SILENT:
 
-BIN_NAME = BOOT$(HAS_EXFAT)$(HAS_DS34)$(HAS_ETH)$(HAS_IOP_RESET)$(HAS_SMB)$(HAS_DVRP)$(HAS_XFROM)$(HAS_MX4SIO)$(HAS_EESIO)
+BIN_NAME = BOOT$(HAS_EXFAT)$(HAS_DS34)$(HAS_ETH)$(HAS_SMB)$(HAS_DVRP)$(HAS_XFROM)$(HAS_MX4SIO)$(HAS_EESIO)$(HAS_UDPTTY)$(HAS_TTY2SIOR)$(HAS_IOP_RESET)
 EE_BIN = UNC-$(BIN_NAME).ELF
 EE_BIN_PKD = $(BIN_NAME).ELF
 EE_OBJS = main.o config.o elf.o draw.o loader_elf.o filer.o \
@@ -78,12 +78,14 @@ endif
 
 ifeq ($(SIO_DEBUG),1)
     EE_CFLAGS += -DSIO_DEBUG
-    EE_OBJS += sior_irx.o
     HAS_EESIO = -SIO_DEBUG
-	ifeq ($(SIOR),1)
-        EE_LIBS += -lsior
-        EE_CFLAGS += -DSIOR
-	endif
+endif
+
+ifeq ($(TTY2SIOR),1)
+    EE_LIBS += -lsior
+    EE_CFLAGS += -DTTY2SIOR
+    HAS_TTY2SIOR = -TTY2SIOR
+    EE_OBJS += tty2sior_irx.o
 endif
 
 ifeq ($(IOP_RESET),0)
@@ -95,9 +97,9 @@ ifeq ($(ETH),1)
     EE_OBJS += ps2smap_irx.o ps2ftpd_irx.o ps2host_irx.o ps2netfs_irx.o ps2ip_irx.o
     EE_CFLAGS += -DETH
 	ifeq ($(UDPTTY),1)
-	  EE_OBJS += udptty.o
-	  HAS_UDPTTY = -UDPTTY
-	  EE_CFLAGS += -DUDPTTY
+      EE_OBJS += udptty.o
+      HAS_UDPTTY = -UDPTTY
+      EE_CFLAGS += -DUDPTTY -DCOMMON_PRINTF
 	endif
 else
     HAS_ETH = -NO_NETWORK
