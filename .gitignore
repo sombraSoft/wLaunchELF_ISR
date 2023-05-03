@@ -7,6 +7,10 @@
 *.swp
 *.tmp
 *.irx
-*.s
+
+asm/*
+obj/*
+
 githash.h
-!iop/*.irx
+!iop/__precompiled/*
+iop/vmc_fs.irx

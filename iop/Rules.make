@@ -21,6 +21,12 @@ ifeq ($(IOP_CC_VERSION),3.2.3)
 ASFLAGS_TARGET = -march=r3000
 endif
 
+DEBUG ?= 0
+ifneq ($(DEBUG), 0)
+  $(info -- $(IOP_BIN): compiling with debug level $(DEBUG))
+  IOP_CFLAGS += -DDEBUG=$(DEBUG)
+endif
+
 IOP_INCS := $(IOP_INCS) -I$(PS2SDK)/iop/include -I$(PS2SDK)/common/include -Iinclude
 
 IOP_CFLAGS  := -D_IOP -fno-builtin -O2 -G0 $(IOP_INCS) $(IOP_CFLAGS)
@@ -89,8 +95,11 @@ $(IOP_LIB_DIR):
 	$(IOP_CC) $(IOP_CFLAGS) -I. -c build-exports.c -o $@
 	-rm -f build-exports.c
 
-$(IOP_BIN) : $(IOP_OBJS)
-	$(IOP_CC) $(IOP_CFLAGS) -o $(IOP_BIN) $(IOP_OBJS) $(IOP_LDFLAGS) $(IOP_LIBS)
+$(IOP_BIN): $(IOP_OBJS)
+	$(IOP_CC) $(IOP_CFLAGS) -o $@ $(IOP_OBJS) $(IOP_LDFLAGS) $(IOP_LIBS)
+ifneq (__,_$(IOP_BIN_DIR)_)
+	cp $(IOP_BIN) $(IOP_BIN_DIR)
+endif
 
-$(IOP_LIB) : $(IOP_OBJS)
-	$(IOP_AR) cru $(IOP_LIB) $(IOP_OBJS)
+$(IOP_LIB): $(IOP_OBJS)
+	$(IOP_AR) cru $< $(IOP_OBJS)
