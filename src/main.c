@@ -813,7 +813,7 @@ static void load_ps2dev9(void)
 
 	if (!have_ps2dev9) {
 		ID = SifExecModuleBuffer(ps2dev9_irx, size_ps2dev9_irx, 0, NULL, &rcode);
-		DPRINTF(" [DEV9.IRX]: ID=%d, ret=%d\n", ID, rcode);
+		DPRINTF(" [DEV9]: ID=%d, ret=%d\n", ID, rcode);
 		ps2dev9_loaded = (ID >= 0 && rcode == 0);  //DEV9.IRX must have successfully loaded and returned RESIDENT END.
 		have_ps2dev9 = 1;
 	}
@@ -829,13 +829,13 @@ static void load_ps2ip(void)
 	load_ps2dev9();
 	if (!have_ps2ip) {
 		ID = SifExecModuleBuffer(ps2ip_irx, size_ps2ip_irx, 0, NULL, &ret);
-		DPRINTF(" [PS2IP.IRX]: ID=%d, ret=%d\n", ID, ret);
+		DPRINTF(" [PS2IP]: ID=%d, ret=%d\n", ID, ret);
 		have_ps2ip = 1;
 	}
 	if (!have_ps2smap) {
 		ID = SifExecModuleBuffer(ps2smap_irx, size_ps2smap_irx,
 		                    if_conf_len, &if_conf[0], &ret);
-		DPRINTF(" [SMAP.IRX]: ID=%d, ret=%d\n", ID, ret);
+		DPRINTF(" [SMAP]: ID=%d, ret=%d\n", ID, ret);
 		have_ps2smap = 1;
 	}
 }
@@ -868,17 +868,17 @@ static void load_ps2atad(void)
 	load_ps2dev9();
 	if (!have_ps2atad) {
 		ID = SifExecModuleBuffer(ps2atad_irx, size_ps2atad_irx, 0, NULL, &ret);
-		DPRINTF(" [ATAD.IRX]: ID=%d, ret=%d\n", ID, ret);
+		DPRINTF(" [ATAD]: ID=%d, ret=%d\n", ID, ret);
 		have_ps2atad = 1;
 	}
 	if (!have_ps2hdd) {
 		ID = SifExecModuleBuffer(ps2hdd_irx, size_ps2hdd_irx, sizeof(hddarg), hddarg, &ret);
-		DPRINTF(" [PS2HDD.IRX]: ID=%d, ret=%d\n", ID, ret);
+		DPRINTF(" [PS2HDD]: ID=%d, ret=%d\n", ID, ret);
 		have_ps2hdd = 1;
 	}
 	if (!have_ps2fs) {
 		ID = SifExecModuleBuffer(ps2fs_irx, size_ps2fs_irx, sizeof(pfsarg), pfsarg, &ret);
-		DPRINTF(" [PS2FS.IRX]: ID=%d, ret=%d\n", ID, ret);
+		DPRINTF(" [PS2FS]: ID=%d, ret=%d\n", ID, ret);
 		have_ps2fs = 1;
 	}
 }
@@ -907,7 +907,7 @@ void load_ps2host(void)
 	load_ps2ip();
 	if (!have_ps2host) {
 		ID = SifExecModuleBuffer(ps2host_irx, size_ps2host_irx, 0, NULL, &ret);
-		DPRINTF(" [PS2HOST.IRX]: ID=%d, ret=%d\n", ID, ret);
+		DPRINTF(" [PS2HOST]: ID=%d, ret=%d\n", ID, ret);
 		have_ps2host = 1;
 	}
 }
@@ -924,7 +924,7 @@ static void load_smbman(void)
 	load_ps2ip();
 	if (!have_smbman) {
 		ID = SifExecModuleBuffer(smbman_irx, size_smbman_irx, 0, NULL, &ret);
-		DPRINTF(" [SMBMAN.IRX]: ID=%d, ret=%d\n", ID, ret);
+		DPRINTF(" [SMBMAN]: ID=%d, ret=%d\n", ID, ret);
 		have_smbman = 1;
 	}
 }
@@ -943,14 +943,14 @@ static void load_ps2dvr(void)
 		drawMsg("Loading dvrdrv");
 	if (!have_dvrdrv) {
 		ID = SifExecModuleBuffer(dvrdrv_irx, size_dvrdrv_irx, 0, NULL, &ret);
-		DPRINTF(" [DVRDRV.IRX]: ID=%d, ret=%d\n", ID, ret);
+		DPRINTF(" [DVRDRV]: ID=%d, ret=%d\n", ID, ret);
 		have_dvrdrv = 1;
 	}
 	if (!is_early_init)  //Do not draw any text before the UI is initialized.
 		drawMsg("Loading dvrfile");
 	if (!have_dvrfile) {
 		ID = SifExecModuleBuffer(dvrfile_irx, size_dvrfile_irx, 0, NULL, &ret);
-		DPRINTF(" [DVRFILE.IRX]: ID=%d, ret=%d\n", ID, ret);
+		DPRINTF(" [DVRFILE]: ID=%d, ret=%d\n", ID, ret);
 		have_dvrfile = 1;
 	}
 }
@@ -1074,7 +1074,7 @@ void load_vmc_fs(void)
 
 	if (!have_vmc_fs) {
 		ID = SifExecModuleBuffer(vmc_fs_irx, size_vmc_fs_irx, 0, NULL, &ret);
-		DPRINTF(" [VMC_FS.IRX]: ID=%d, ret=%d\n", ID, ret);
+		DPRINTF(" [VMC_FS]: ID=%d, ret=%d\n", ID, ret);
 		have_vmc_fs = 1;
 	}
 }
@@ -1094,7 +1094,7 @@ static void load_ps2ftpd(void)
 	load_ps2ip();
 	if (!have_ps2ftpd) {
 		ID = SifExecModuleBuffer(ps2ftpd_irx, size_ps2ftpd_irx, arglen, arg_p, &ret);
-		DPRINTF(" [PS2FTPD.IRX]: ID=%d, ret=%d\n", ID, ret);
+		DPRINTF(" [PS2FTPD]: ID=%d, ret=%d\n", ID, ret);
 		have_ps2ftpd = 1;
 	}
 }
@@ -1110,7 +1110,7 @@ static void load_ps2netfs(void)
 	load_ps2ip();
 	if (!have_ps2netfs) {
 		ID = SifExecModuleBuffer(ps2netfs_irx, size_ps2netfs_irx, 0, NULL, &ret);
-		DPRINTF(" [NETFS.IRX]: ID=%d, ret=%d\n", ID, ret);
+		DPRINTF(" [NETFS]: ID=%d, ret=%d\n", ID, ret);
 		have_ps2netfs = 1;
 	}
 }
@@ -1123,15 +1123,15 @@ static void loadBasicModules(void)
 	int ret, id;
 
 	id = SifExecModuleBuffer(iomanx_irx, size_iomanx_irx, 0, NULL, &ret);
-	DPRINTF(" [IOMANX.IRX]: id=%d ret=%d\n", id, ret);
+	DPRINTF(" [IOMANX]: id=%d ret=%d\n", id, ret);
 	id = SifExecModuleBuffer(filexio_irx, size_filexio_irx, 0, NULL, &ret);
-	DPRINTF(" [FILEXIO.IRX]: id=%d ret=%d\n", id, ret);
+	DPRINTF(" [FILEXIO]: id=%d ret=%d\n", id, ret);
 
 	id = SifExecModuleBuffer(allowdvdv_irx, size_allowdvdv_irx, 0, NULL, &ret);  //unlocks cdvd for reading on psx dvr
-	DPRINTF(" [ALLOWDVD.IRX]: id=%d ret=%d\n", id, ret);
+	DPRINTF(" [ALLOWDVD]: id=%d ret=%d\n", id, ret);
 #ifdef HOMEBREW_SIO2MAN
 	id = SifExecModuleBuffer(sio2man_irx, size_sio2man_irx, 0, NULL, &ret);
-	DPRINTF(" [SIO2MAN.IRX]: id=%d ret=%d\n", id, ret);
+	DPRINTF(" [SIO2MAN]: id=%d ret=%d\n", id, ret);
 #else
 	id = SifLoadModule("rom0:SIO2MAN", 0, NULL);
 	DPRINTF(" [rom0:SIO2MAN]: id=%d\n", id);
@@ -1145,7 +1145,7 @@ static void loadBasicModules(void)
 	SIOR_Init(0x20);
 
 	id = SifExecModuleBuffer(tty2sior_irx, size_tty2sior_irx, 0, NULL, &ret);
-	DPRINTF(" [TTY2SIOR.IRX]: id=%d ret=%d\n", id, ret);
+	DPRINTF(" [TTY2SIOR]: id=%d ret=%d\n", id, ret);
 #endif
 
 #if defined(TTY2SIOR) || defined(SIO_DEBUG)
@@ -1153,14 +1153,14 @@ static void loadBasicModules(void)
 #endif
 
 	id = SifExecModuleBuffer(mcman_irx, size_mcman_irx, 0, NULL, &ret);  //Home
-	DPRINTF(" [MCMAN.IRX]: id=%d ret=%d\n", id, ret);
+	DPRINTF(" [MCMAN]: id=%d ret=%d\n", id, ret);
 	//SifLoadModule("rom0:MCMAN", 0, NULL); //Sony
 	id = SifExecModuleBuffer(mcserv_irx, size_mcserv_irx, 0, NULL, &ret);  //Home
-	DPRINTF(" [MCSERV.IRX]: id=%d ret=%d\n", id, ret);
+	DPRINTF(" [MCSERV]: id=%d ret=%d\n", id, ret);
 	//SifLoadModule("rom0:MCSERV", 0, NULL); //Sony
 #ifdef HOMEBREW_SIO2MAN
 	id = SifExecModuleBuffer(padman_irx, size_padman_irx, 0, NULL, &ret);  //Home
-	DPRINTF(" [PADMAN.IRX]: id=%d ret=%d\n", id, ret);
+	DPRINTF(" [PADMAN]: id=%d ret=%d\n", id, ret);
 #else
 	id = SifLoadModule("rom0:PADMAN", 0, NULL);
 	DPRINTF(" [rom0:PADMAN]: id=%d\n", id);
@@ -1175,7 +1175,7 @@ static void loadCdModules(void)
 
 	if (!have_cdvd) {
 		id = SifExecModuleBuffer(cdvd_irx, size_cdvd_irx, 0, NULL, &ret);
-		DPRINTF(" [CDVD.IRX]: id=%d, ret=%d\n", id, ret);
+		DPRINTF(" [CDVD]: id=%d, ret=%d\n", id, ret);
 		sceCdInit(SCECdINoD);  // SCECdINoD init without check for a disc. Reduces risk of a lockup if the drive is in a erroneous state.
 		CDVD_Init();
 		have_cdvd = 1;
@@ -1369,7 +1369,7 @@ static int loadExternalModule(char *modPath, void *defBase, int defSize)
 //---------------------------------------------------------------------------
 static void loadUsbDModule(void)
 {
-	DPRINTF(" [USBD.IRX]:\n");
+	DPRINTF(" [USBD]:\n");
 	if ((!have_usbd) && (loadExternalModule(setting->usbd_file, &usbd_irx, size_usbd_irx)))
 		have_usbd = 1;
 }
@@ -1401,11 +1401,11 @@ static void loadUsbModules(void)
         have_usb_mass = 1;
     } else if (have_usbd && !have_usb_mass) {
         ID = SifExecModuleBuffer(bdm_irx, size_bdm_irx, 0, NULL, &ret);
-		DPRINTF(" [BDM.IRX] ID=%d, ret=%d\n", ID, ret);
+		DPRINTF(" [BDM] ID=%d, ret=%d\n", ID, ret);
         ID = SifExecModuleBuffer(bdmfs_fatfs_irx, size_bdmfs_fatfs_irx, 0, NULL, &ret);
-		DPRINTF(" [BDMFS_FATFS.IRX] ID=%d, ret=%d\n", ID, ret);
+		DPRINTF(" [BDMFS_FATFS] ID=%d, ret=%d\n", ID, ret);
         ID = SifExecModuleBuffer(usbmass_bd_irx, size_usbmass_bd_irx, 0, NULL, &ret);
-		DPRINTF(" [USBMASS_BD.IRX] ID=%d, ret=%d\n", ID, ret);
+		DPRINTF(" [USBMASS_BD] ID=%d, ret=%d\n", ID, ret);
         delay(3);
         USB_mass_loaded = 1;
         have_usb_mass = 1;
@@ -1419,7 +1419,7 @@ static void loadUsbModules(void)
 #endif
 #ifdef MX4SIO
 	ID = SifExecModuleBuffer(mx4sio_bd_irx, size_mx4sio_bd_irx, 0, NULL, &ret);
-	DPRINTF(" [MX4SIO_BD.IRX] ID=%d, ret=%d\n", ID, ret);
+	DPRINTF(" [MX4SIO_BD] ID=%d, ret=%d\n", ID, ret);
 #endif
 }
 #else
@@ -1458,7 +1458,7 @@ void loadHdlInfoModule(void)
 	if (!have_hdl_info) {
 		drawMsg(LNG(Loading_HDL_Info_Module));
 		ID = SifExecModuleBuffer(hdl_info_irx, size_hdl_info_irx, 0, NULL, &ret);
-		DPRINTF(" [HDL_INFO.IRX]: ID=%d, ret=%d\n", ID, ret);
+		DPRINTF(" [HDL_INFO]: ID=%d, ret=%d\n", ID, ret);
 		ret = Hdl_Info_BindRpc();
 		have_hdl_info = 1;
 	}
@@ -1503,7 +1503,7 @@ static void setupPowerOff(void)
 	if (!done_setupPowerOff) {
 		if (!have_poweroff) {
 			ID = SifExecModuleBuffer(poweroff_irx, size_poweroff_irx, 0, NULL, &ret);
-			DPRINTF(" [POWEROFF.IRX]: ID=%d, ret=%d\n", ID, ret);
+			DPRINTF(" [POWEROFF]: ID=%d, ret=%d\n", ID, ret);
 			have_poweroff = 1;
 		}
 		poweroffInit();
@@ -2408,7 +2408,7 @@ static void Reset()
 int i, d;
 	load_ps2ip();
 	i = SifExecModuleBuffer(&udptty_irx, size_udptty_irx, 0, NULL, &d);
-    DPRINTF(" [UDPTTY.IRX]: id=%d, ret=%d\n", i, d);
+    DPRINTF(" [UDPTTY]: id=%d, ret=%d\n", i, d);
 #endif
 	loadBasicModules();
 	loadCdModules();
