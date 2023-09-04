@@ -18,8 +18,13 @@ TTY2SIOR ?= 0
 .SILENT:
 
 BIN_NAME = $(HAS_EXFAT)$(HAS_DS34)$(HAS_ETH)$(HAS_SMB)$(HAS_DVRP)$(HAS_XFROM)$(HAS_MX4SIO)$(HAS_EESIO)$(HAS_UDPTTY)$(HAS_TTY2SIOR)$(HAS_IOP_RESET)
-EE_BIN = UNC-BOOT$(BIN_NAME).ELF
-EE_BIN_PKD = BOOT$(BIN_NAME).ELF
+ifeq ($(DEBUG), 0)
+  EE_BIN = UNC-BOOT$(BIN_NAME).ELF
+  EE_BIN_PKD = BOOT$(BIN_NAME).ELF
+else
+  EE_BIN = UNC-BOOT.ELF
+  EE_BIN_PKD = BOOT.ELF
+endif
 EE_OBJS = main.o config.o elf.o draw.o loader_elf.o filer.o \
 	poweroff_irx.o iomanx_irx.o filexio_irx.o ps2atad_irx.o ps2dev9_irx.o \
 	ps2hdd_irx.o ps2fs_irx.o usbd_irx.o mcman_irx.o mcserv_irx.o \
@@ -180,10 +185,10 @@ clean:
 	$(MAKE) -C iop/AllowDVDV clean
 	$(MAKE) -C iop/oldlibs/libcdvd clean
 	$(MAKE) -C iop/oldlibs/ps2ftpd clean
-	rm -f githash.h $(EE_BIN) $(EE_BIN_PKD)
-	rm -rf $(EE_OBJS_DIR)
-	rm -rf $(EE_ASM_DIR)
-	rm -f iop/*.irx
+	@rm -f githash.h $(EE_BIN) $(EE_BIN_PKD)
+	@rm -rf $(EE_OBJS_DIR)
+	@rm -rf $(EE_ASM_DIR)
+	@rm -f iop/*.irx
 
 rebuild: clean all
 
