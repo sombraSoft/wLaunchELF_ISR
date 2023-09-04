@@ -2557,6 +2557,9 @@ int main(int argc, char *argv[])
 	LaunchElfDir[0] = 0;
 	boot_path[0] = 0;
 
+	DPRINTF("Loading USB modules\n");
+	loadUsbModules();
+
 	if ((argc > 0) && argv[0]) {
 		strcpy(LaunchElfDir, argv[0]);  //Default LaunchElfDir to the boot path.
 		strcpy(boot_path, argv[0]);
@@ -2654,17 +2657,6 @@ int main(int argc, char *argv[])
 		initHOST();
 	}
 #endif
-	//Last chance to look at bootup screen, so allow braking here
-	/*
-	if(readpad() && (new_pad && PAD_UP))
-	{ scr_printf("________ Boot paused. Press 'Circle' to continue.\n");
-		while(1)
-		{	if(new_pad & PAD_CIRCLE)
-				break;
-			while(!readpad());
-		}
-	}
-*/
 	DPRINTF("setupGS()\n");
 	setupGS();
 	gsKit_clear(gsGlobal, GS_SETREG_RGBAQ(0x00, 0x00, 0x00, 0x00, 0x00));
@@ -2678,8 +2670,6 @@ int main(int argc, char *argv[])
 	//It's time to load and init drivers
 	DPRINTF("Getting IPCONFIG\n");
 	getIpConfig();
-	DPRINTF("Loading USB modules\n");
-	loadUsbModules();
 
 	WaitTime = Timer();
 	DPRINTF("setup pad\n");
