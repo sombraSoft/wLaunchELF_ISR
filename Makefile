@@ -14,6 +14,7 @@ UDPTTY ?= 0
 MX4SIO ?= 0
 SIO2MAN ?= 0
 TTY2SIOR ?= 0
+DEBUG ?= 0
 # ----------------------------- #
 .SILENT:
 
@@ -197,7 +198,9 @@ info:
 	$(info EE_BIN = $(EE_BIN))
 	$(info EE_BIN_PKD = $(EE_BIN_PKD))
 	$(info EE_OBJS = $(EE_OBJS))
-	$(info TMANIP = $(TMANIP))
+	$(info TMANIP=$(TMANIP), SIO_DEBUG=$(SIO_DEBUG), DS34=$(DS34), ETH=$(ETH))
+	$(info EXFAT=$(EXFAT), XFROM=$(XFROM), UDPTTY=$(UDPTTY), MX4SIO=$(MX4SIO))
+	$(info IOP_RESET=$(IOP_RESET))
 
 #special recipe for compiling and dumping obj to subfolder
 $(EE_OBJS_DIR)%.o: $(EE_SRC_DIR)%.c | $(EE_OBJS_DIR)
