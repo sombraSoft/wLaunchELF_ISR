@@ -1370,7 +1370,7 @@ static int loadExternalModule(char *modPath, void *defBase, int defSize)
 static void loadUsbDModule(void)
 {
 	DPRINTF(" [USBD]:\n");
-	if ((!have_usbd) && (loadExternalModule(setting->usbd_file, &usbd_irx, size_usbd_irx)))
+	if ((!have_usbd) && (loadExternalModule("USBD.IRX", &usbd_irx, size_usbd_irx)))
 		have_usbd = 1;
 }
 //------------------------------
@@ -1396,7 +1396,7 @@ static void loadUsbModules(void)
     int ret, ID;
 
     loadUsbDModule();
-    if (have_usbd && !have_usb_mass && (USB_mass_loaded = loadExternalModule(setting->usbmass_file, NULL, 0))) {
+    if (have_usbd && !have_usb_mass && (USB_mass_loaded = loadExternalModule("", NULL, 0))) {
         delay(3);
         have_usb_mass = 1;
     } else if (have_usbd && !have_usb_mass) {
