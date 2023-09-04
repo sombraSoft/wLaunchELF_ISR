@@ -1425,7 +1425,7 @@ static void loadUsbModules(void)
 #else
 {
 	loadUsbDModule();
-	if (have_usbd && !have_usb_mass && (USB_mass_loaded = loadExternalModule(setting->usbmass_file, &usb_mass_irx, size_usb_mass_irx))) {
+	if (have_usbd && !have_usb_mass && (USB_mass_loaded = loadExternalModule("", &usb_mass_irx, size_usb_mass_irx))) {
 		delay(3);
 		have_usb_mass = 1;
 	}
